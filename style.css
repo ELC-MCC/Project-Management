@@ -45,7 +45,7 @@ button { cursor: pointer; }
 /* ============== ITEMS ============== */
 .proj-item, .team-item, .task-item { padding: 8px 10px; cursor: pointer; border-bottom: 1px solid #333333; font-size: 12px; border-left: 3px solid transparent; }
 .proj-item:hover, .team-item:hover, .task-item:hover { background: #111111; }
-.proj-item.active, .team-item.active, .task-item.active { border-left-color: #CC9700; background: #0a0a0a; }
+.proj-item.active, .team-item.active, .task-item.active { border-left-color: #FF6600; background: #0a0a0a; }
 
 /* ============== TASK LAYOUT ============== */
 .task-item { padding: 6px 10px; }

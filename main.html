@@ -46,6 +46,7 @@
     <div class="panel-foot">
       <button class="btn btn-add" id="task-add">+ Add</button>
       <button class="btn btn-del" id="task-del">Delete</button>
+      <button class="btn btn-edit" id="task-toggle-archive" style="margin-left:auto;font-size:11px">Show Finished</button>
     </div>
   </div>
 
@@ -190,6 +191,7 @@ var data = getData();
 var selProj = null;
 var selTeam = null;
 var selTask = null;
+var showArchived = false;
 
 // ===================================================================
 function initData() {
@@ -286,7 +288,11 @@ function renderTasks() {
   taskHeadEl.textContent = 'Tasks -- ' + proj.name;
   taskListEl.innerHTML = '';
 
-  proj.tasks.forEach(function(t) {
+  var tasksToShow = proj.tasks.filter(function(t) {
+    return showArchived ? (t.archived === true) : (t.archived !== true);
+  });
+
+  tasksToShow.forEach(function(t) {
     var div = document.createElement('div');
     div.className = 'task-item' + (t.id === selTask ? ' active' : '');
     div.dataset.id = t.id;
@@ -342,6 +348,18 @@ function renderTasks() {
               data.projects[i].tasks[j].status = this.value;
               this.className = 'task-status-select ' + statusClass(this.value);
               persist();
+
+              // If set to Done, prompt to archive after 1 second
+              if (this.value === 'Done') {
+                var task = data.projects[i].tasks[j];
+                setTimeout(function() {
+                  if (confirm('Archive "' + task.title + '"?')) {
+                    task.archived = true;
+                    persist();
+                    renderTasks();
+                  }
+                }, 1000);
+              }
               return;
             }
           }
@@ -369,7 +387,9 @@ function renderTasks() {
     });
   });
 
-  if (proj.tasks.length === 0) taskListEl.innerHTML = '<div class="empty">No tasks</div>';
+  if (tasksToShow.length === 0) {
+    taskListEl.innerHTML = '<div class="empty">' + (showArchived ? 'No finished tasks' : 'No tasks') + '</div>';
+  }
 }
 
 function statusOptions(current) {
@@ -559,6 +579,13 @@ document.getElementById('task-del').addEventListener('click', function() {
     }
   }
   persist();
+  selTask = null;
+  renderTasks();
+});
+
+document.getElementById('task-toggle-archive').addEventListener('click', function() {
+  showArchived = !showArchived;
+  this.textContent = showArchived ? 'Show Current' : 'Show Finished';
   selTask = null;
   renderTasks();
 });
