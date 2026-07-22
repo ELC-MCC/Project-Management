@@ -15,6 +15,14 @@
         "Charlie",
         "Diana"
       ]
+    },
+    {
+      "id": 3,
+      "name": "Test Team",
+      "members": [
+        "Connor",
+        "Cole"
+      ]
     }
   ],
   "projects": [
@@ -82,6 +90,23 @@
           "persons": [
             "Diana"
           ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Test Project",
+      "teams": [
+        3
+      ],
+      "tasks": [
+        {
+          "id": 1,
+          "title": "TASK 1",
+          "desc": "DO IT",
+          "status": "In Progress",
+          "team": 3,
+          "persons": []
         }
       ]
     }
