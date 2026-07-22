@@ -66,11 +66,12 @@
           "id": 1,
           "title": "Set up CI/CD",
           "desc": "",
-          "status": "In Progress",
+          "status": "Done",
           "team": 2,
           "persons": [
             "Charlie"
-          ]
+          ],
+          "archived": true
         },
         {
           "id": 2,
