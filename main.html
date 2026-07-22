@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ELC Project Management</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="main">
+
+  <!-- LEFT: Projects -->
+  <div class="panel panel-left">
+    <div class="panel-head">Projects</div>
+    <div class="panel-body" id="proj-list"></div>
+    <div class="panel-foot">
+      <button id="proj-add">+ Add</button>
+      <button id="proj-del">Delete</button>
+    </div>
+  </div>
+
+  <!-- RIGHT: Tasks -->
+  <div class="panel panel-right">
+    <div class="panel-head" id="task-head">Tasks -- (select a project)</div>
+    <div class="panel-body" id="task-list"></div>
+    <div class="panel-foot">
+      <button id="task-add">+ Add</button>
+      <button id="task-toggle">Toggle Status</button>
+      <button id="task-del">Delete</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ===================================================================
+//  Seed data (embedded, gets encrypted by StatiCrypt)
+// ===================================================================
+
+var SEED_DATA = {
+  projects: [
+    { id: 1, name: 'Website Redesign', tasks: [
+      { id: 1, title: 'Wireframe homepage', status: 'Done' },
+      { id: 2, title: 'Design color palette', status: 'In Progress' },
+      { id: 3, title: 'Build components', status: 'Pending' }
+    ]},
+    { id: 2, name: 'Mobile App v2', tasks: [
+      { id: 1, title: 'Set up CI/CD', status: 'Done' },
+      { id: 2, title: 'Implement dark mode', status: 'In Progress' }
+    ]},
+    { id: 3, name: 'Database Migration', tasks: [
+      { id: 1, title: 'Audit schema', status: 'Done' },
+      { id: 2, title: 'Write migration scripts', status: 'Pending' },
+      { id: 3, title: 'Test rollback plan', status: 'Pending' }
+    ]}
+  ]
+};
+
+// ===================================================================
+//  Data layer -- plain localStorage (page is encrypted by StatiCrypt)
+// ===================================================================
+
+function loadData() {
+  var raw = localStorage.getItem('elc_data');
+  if (!raw) return null;
+  try { return JSON.parse(raw); } catch(e) { return null; }
+}
+
+function saveData(data) {
+  localStorage.setItem('elc_data', JSON.stringify(data));
+}
+
+function seedData() {
+  saveData(SEED_DATA);
+  return SEED_DATA;
+}
+
+function getData() {
+  var d = loadData();
+  if (!d) { d = seedData(); }
+  return d;
+}
+
+// ===================================================================
+//  State
+// ===================================================================
+
+var data = getData();
+var selProj = null;
+var selTask = null;
+
+var projListEl = document.getElementById('proj-list');
+var taskListEl = document.getElementById('task-list');
+var taskHeadEl = document.getElementById('task-head');
+
+// ===================================================================
+//  Render helpers
+// ===================================================================
+
+function renderProjects() {
+  projListEl.innerHTML = '';
+  data.projects.forEach(function(p) {
+    var div = document.createElement('div');
+    div.className = 'proj-item' + (p.id === selProj ? ' active' : '');
+    div.textContent = p.name;
+    div.addEventListener('click', function() { selectProject(p.id); });
+    projListEl.appendChild(div);
+  });
+
+  if (data.projects.length === 0) {
+    projListEl.innerHTML = '<div class="empty">No projects</div>';
+  }
+}
+
+function selectProject(id) {
+  selProj = id;
+  selTask = null;
+  renderProjects();
+  renderTasks();
+}
+
+function statusClass(status) {
+  if (status === 'Done') return 'done';
+  if (status === 'In Progress') return 'in-progress';
+  if (status === 'Pending') return 'pending';
+  return '';
+}
+
+function renderTasks() {
+  var proj = null;
+  for (var i = 0; i < data.projects.length; i++) {
+    if (data.projects[i].id === selProj) { proj = data.projects[i]; break; }
+  }
+
+  if (!proj) {
+    taskHeadEl.textContent = 'Tasks -- (select a project)';
+    taskListEl.innerHTML = '<div class="empty">Select a project</div>';
+    return;
+  }
+
+  taskHeadEl.textContent = 'Tasks -- ' + proj.name;
+  taskListEl.innerHTML = '';
+
+  proj.tasks.forEach(function(t) {
+    var div = document.createElement('div');
+    div.className = 'task-item' + (t.id === selTask ? ' active' : '');
+    var sc = statusClass(t.status);
+    div.innerHTML = '<span class="task-name">' + esc(t.title) + '</span>'
+                 + '<span class="task-status ' + sc + '">' + t.status + '</span>';
+    div.addEventListener('click', function() {
+      selTask = t.id;
+      document.querySelectorAll('.task-item').forEach(function(el) { el.classList.remove('active'); });
+      div.classList.add('active');
+    });
+    taskListEl.appendChild(div);
+  });
+
+  if (proj.tasks.length === 0) {
+    taskListEl.innerHTML = '<div class="empty">No tasks</div>';
+  }
+}
+
+function esc(str) {
+  var d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+function nextId(items) {
+  var max = 0;
+  for (var i = 0; i < items.length; i++) {
+    if (items[i].id > max) max = items[i].id;
+  }
+  return max + 1;
+}
+
+function persist() {
+  saveData(data);
+}
+
+// ===================================================================
+//  Actions
+// ===================================================================
+
+document.getElementById('proj-add').addEventListener('click', function() {
+  var name = prompt('Project name:');
+  if (name && name.trim()) {
+    data.projects.push({ id: nextId(data.projects), name: name.trim(), tasks: [] });
+    persist();
+    selProj = data.projects[data.projects.length - 1].id;
+    renderProjects();
+    renderTasks();
+  }
+});
+
+document.getElementById('proj-del').addEventListener('click', function() {
+  if (selProj === null) return;
+  var found = null;
+  for (var i = 0; i < data.projects.length; i++) {
+    if (data.projects[i].id === selProj) { found = data.projects[i]; break; }
+  }
+  if (!found) return;
+  if (!confirm('Delete "' + found.name + '" and all its tasks?')) return;
+
+  data.projects = data.projects.filter(function(p) { return p.id !== selProj; });
+  persist();
+  selProj = data.projects.length > 0 ? data.projects[0].id : null;
+  renderProjects();
+  renderTasks();
+});
+
+document.getElementById('task-add').addEventListener('click', function() {
+  if (selProj === null) { alert('Select a project first.'); return; }
+  var title = prompt('Task description:');
+  if (title && title.trim()) {
+    for (var i = 0; i < data.projects.length; i++) {
+      if (data.projects[i].id === selProj) {
+        data.projects[i].tasks.push({
+          id: nextId(data.projects[i].tasks),
+          title: title.trim(),
+          status: 'Pending'
+        });
+        break;
+      }
+    }
+    persist();
+    renderTasks();
+  }
+});
+
+document.getElementById('task-toggle').addEventListener('click', function() {
+  if (selProj === null || selTask === null) { alert('Select a task first.'); return; }
+  var cycle = { 'Pending': 'In Progress', 'In Progress': 'Done', 'Done': 'Pending' };
+  for (var i = 0; i < data.projects.length; i++) {
+    if (data.projects[i].id === selProj) {
+      for (var j = 0; j < data.projects[i].tasks.length; j++) {
+        if (data.projects[i].tasks[j].id === selTask) {
+          data.projects[i].tasks[j].status = cycle[data.projects[i].tasks[j].status] || 'Pending';
+          break;
+        }
+      }
+      break;
+    }
+  }
+  persist();
+  renderTasks();
+});
+
+document.getElementById('task-del').addEventListener('click', function() {
+  if (selProj === null || selTask === null) { alert('Select a task first.'); return; }
+  if (!confirm('Delete this task?')) return;
+  for (var i = 0; i < data.projects.length; i++) {
+    if (data.projects[i].id === selProj) {
+      data.projects[i].tasks = data.projects[i].tasks.filter(function(t) { return t.id !== selTask; });
+      break;
+    }
+  }
+  persist();
+  selTask = null;
+  renderTasks();
+});
+
+// ===================================================================
+//  Init
+// ===================================================================
+
+renderProjects();
+if (data.projects.length > 0) {
+  selProj = data.projects[0].id;
+  renderProjects();
+  renderTasks();
+}
+</script>
+</body>
+</html>

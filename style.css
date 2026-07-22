@@ -1,0 +1,216 @@
+/* ELC Project Management -- Minimal stylesheet
+   Black (#000000) and MCC Gold (#CC9700) with colored status badges. */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  background: #000000;
+  color: #CC9700;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 14px;
+}
+
+input, button, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  background: #000000;
+  color: #CC9700;
+  border: 2px solid #CC9700;
+  padding: 6px 10px;
+}
+
+input:focus, button:focus {
+  outline: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:hover {
+  background: #CC9700;
+  color: #000000;
+}
+
+/* Login */
+
+.login-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.login-box {
+  border: 2px solid #CC9700;
+  padding: 24px 32px;
+  text-align: center;
+  width: 300px;
+}
+
+.login-box h1 {
+  font-size: 18px;
+  font-weight: normal;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.login-box p {
+  font-size: 12px;
+  margin-bottom: 20px;
+}
+
+.login-box input {
+  width: 100%;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.login-box .err {
+  font-size: 11px;
+  min-height: 16px;
+  margin-bottom: 8px;
+}
+
+.login-box button {
+  width: 100%;
+}
+
+/* Layout */
+
+.main {
+  display: flex;
+  height: 100%;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  border-right: 2px solid #CC9700;
+}
+
+.panel:last-child {
+  border-right: none;
+}
+
+.panel-left {
+  width: 240px;
+  min-width: 160px;
+  flex-shrink: 0;
+}
+
+.panel-right {
+  flex: 1;
+}
+
+.panel-head {
+  padding: 10px 12px;
+  border-bottom: 2px solid #CC9700;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.panel-body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.panel-foot {
+  display: flex;
+  gap: 4px;
+  padding: 6px 8px;
+  border-top: 2px solid #CC9700;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Items */
+
+.proj-item,
+.task-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #555555;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.proj-item:hover,
+.task-item:hover {
+  background: #CC9700;
+  color: #000000;
+}
+
+.proj-item.active,
+.task-item.active {
+  background: #CC9700;
+  color: #000000;
+}
+
+.task-name {
+  flex: 1;
+  margin-right: 8px;
+}
+
+/* Status badges -- filled colored box with black text */
+
+.task-status {
+  font-size: 10px;
+  font-weight: bold;
+  padding: 3px 8px;
+  white-space: nowrap;
+  color: #000000;
+}
+
+.task-status.done {
+  background: #00FF00;
+}
+
+.task-status.in-progress {
+  background: #0000FF;
+  color: #FFFFFF;
+}
+
+.task-status.pending {
+  background: #FFFF00;
+}
+
+/* Empty state */
+
+.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 12px;
+  color: #555555;
+}
+
+/* Footer buttons */
+
+.panel-foot button {
+  font-size: 11px;
+  padding: 4px 10px;
+}
+
+.panel-foot .lock-link {
+  margin-left: auto;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-color: #CC9700;
+}
+
+.panel-foot .lock-link:hover {
+  background: #CC9700;
+  color: #000000;
+}

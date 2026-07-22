@@ -1,0 +1,61 @@
+name: Encrypt Page
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  encrypt:
+    runs-on: ubuntu-latest
+    container:
+      image: nikolaik/python-nodejs:python3.11-nodejs20-slim
+    permissions:
+      contents: write
+      pages: write
+    steps:
+      - name: Install Git
+        run: |
+          apt-get clean && apt-get update -y
+          apt-get install -y git
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - uses: actions/checkout@v3
+      - name: Install staticrypt
+        run: npm install -g staticrypt@3.*
+      - name: Remove template salt (if necessary)
+        run: |
+          if [ -f .staticrypt.json ]; then
+            current_salt="$(grep -oP '(?<="salt": ")[^"]*' .staticrypt.json)"
+            if [ "$current_salt" = "9fdd6a30e734b0ce7de31a0a221786bf" ]; then
+              echo "Removed default salt to regenerate"
+              rm .staticrypt.json
+            fi
+          fi
+      - name: Embed assets
+        run: |
+          pip install beautifulsoup4
+          python embed.py
+      - name: Encrypt index
+        run: >
+          staticrypt index.html -p ${{ secrets.DECRYPTION_PASSPHRASE }} --short
+          --template "password_template.html"
+          --template-title "ELC Project Management"
+          --template-instructions "Enter team password to continue"
+          --template-button "Unlock"
+          --template-color-primary "#CC9700"
+          --template-color-secondary "#000000"
+      - name: Clean up
+        run: |
+          mv encrypted/index.html index.html
+          rm -r encrypted
+      - name: Commit files
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "encrypted files"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
+          force: true
