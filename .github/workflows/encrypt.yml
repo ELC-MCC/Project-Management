@@ -20,7 +20,7 @@ jobs:
           SYNC_TOKEN: ${{ secrets.SYNC_TOKEN }}
           OFFICER_PW: ${{ secrets.OFFICER_PASSWORD }}
         run: |
-          echo "var API_TOKEN='***';" > token.js
+          echo "var API_TOKEN='${SYNC_TOKEN}';" > token.js
           echo "var OFFICER_PASSWORD='${OFFICER_PW}';" >> token.js
       - name: Install staticrypt
         run: npm install -g staticrypt@3.*
