@@ -11,8 +11,6 @@ jobs:
       image: nikolaik/python-nodejs:python3.11-nodejs20-slim
     permissions:
       contents: write
-      pages: write
-      id-token: write
     steps:
       - uses: actions/checkout@v4
       - name: Install staticrypt
@@ -39,14 +37,15 @@ jobs:
           --template-button "Unlock"
           --template-color-primary "#CC9700"
           --template-color-secondary "#000000"
-      - name: Prepare deploy folder
+      - name: Push encrypted page to gh-pages
         run: |
-          mkdir deploy
-          mv encrypted/index.html deploy/index.html
-      - name: Deploy to gh-pages branch
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./deploy
-          publish_branch: gh-pages
-          force_orphan: true
+          mv encrypted/index.html /tmp/index.html
+          rm -rf encrypted
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git checkout --orphan gh-pages
+          git rm -rf .
+          mv /tmp/index.html index.html
+          git add index.html
+          git commit -m "encrypted page"
+          git push origin gh-pages --force
