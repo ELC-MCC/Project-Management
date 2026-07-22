@@ -15,21 +15,6 @@
         "Charlie",
         "Diana"
       ]
-    },
-    {
-      "id": 3,
-      "name": "CAD TEAM",
-      "members": [
-        "Connor",
-        "Jacob"
-      ]
-    },
-    {
-      "id": 4,
-      "name": "PROGRAMMING",
-      "members": [
-        "JACOB"
-      ]
     }
   ],
   "projects": [
@@ -97,55 +82,6 @@
           "persons": [
             "Diana"
           ]
-        }
-      ]
-    },
-    {
-      "id": 3,
-      "name": "test",
-      "teams": [
-        3,
-        4
-      ],
-      "tasks": [
-        {
-          "id": 1,
-          "title": "MAKE CAD",
-          "desc": "Do the THing",
-          "status": "In Progress",
-          "team": 0,
-          "persons": [
-            "Connor"
-          ]
-        },
-        {
-          "id": 2,
-          "title": "MORE CAD",
-          "desc": "",
-          "status": "In Review",
-          "team": 3,
-          "persons": []
-        },
-        {
-          "id": 3,
-          "title": "DO IT",
-          "desc": "MAKE A THING",
-          "status": "On Hold",
-          "team": 3,
-          "persons": [
-            "Jacob"
-          ]
-        },
-        {
-          "id": 4,
-          "title": "PROGRAM IT",
-          "desc": "MAKE IT WORK",
-          "status": "Done",
-          "team": 4,
-          "persons": [
-            "Connor"
-          ],
-          "archived": true
         }
       ]
     }
