@@ -31,7 +31,9 @@ jobs:
           pip install beautifulsoup4
           python embed.py
       - name: Inject sync token
-        run: python inject_token.py "${{ secrets.SYNC_TOKEN }}"
+        env:
+          SYNC_TOKEN: ${{ secrets.SYNC_TOKEN }}
+        run: python inject_token.py
       - name: Encrypt index
         run: >
           staticrypt index.html -p ${{ secrets.DECRYPTION_PASSPHRASE }} --short
