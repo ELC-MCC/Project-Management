@@ -5,19 +5,16 @@ on:
     branches: [main]
 
 jobs:
-  encrypt:
+  encrypt-and-deploy:
     runs-on: ubuntu-latest
     container:
       image: nikolaik/python-nodejs:python3.11-nodejs20-slim
     permissions:
-      contents: write
+      contents: read
+      pages: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
-      - name: Install Git
-        run: |
-          apt-get clean && apt-get update -y
-          apt-get install -y git
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - name: Install staticrypt
         run: npm install -g staticrypt@3.*
       - name: Remove template salt (if necessary)
@@ -42,14 +39,12 @@ jobs:
           --template-button "Unlock"
           --template-color-primary "#CC9700"
           --template-color-secondary "#000000"
-      - name: Push encrypted page to gh-pages
-        run: |
-          cp encrypted/index.html /tmp/index.html
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git checkout --orphan gh-pages
-          for f in * .*; do [ "$f" = "." ] && continue; [ "$f" = ".." ] && continue; [ "$f" = ".git" ] && continue; rm -rf "$f"; done
-          cp /tmp/index.html index.html
-          git add index.html
-          git commit -m "encrypted page"
-          git push "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" gh-pages --force
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./encrypted
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
