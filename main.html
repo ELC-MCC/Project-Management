@@ -11,16 +11,23 @@
 
 <!-- ================ TOP BAR ================ -->
 <header class="topbar">
-  <span class="sync-status" id="sync-status">Idle</span>
-  <button class="btn btn-add" id="proj-add">+ Project</button>
-  <button class="btn btn-del" id="proj-del">Project</button>
-  <span class="sep"></span>
-  <button class="btn btn-add" id="team-add">+ Team</button>
-  <button class="btn btn-del" id="team-del">Team</button>
-  <span class="sep"></span>
-  <button class="btn btn-add" id="task-add">+ Task</button>
-  <button class="btn btn-del" id="task-del">Task</button>
-  <button id="sync-btn" class="sync-btn green">Sync</button>
+  <div class="topbar-left">
+    <button class="btn btn-add" id="proj-add">+ Add Project</button>
+    <button class="btn btn-del" id="proj-del">Delete Project</button>
+    <span class="sep"></span>
+    <button class="btn btn-add" id="team-add">+ Add Team</button>
+    <button class="btn btn-edit" id="team-edit">Edit Team</button>
+    <button class="btn btn-del" id="team-del">Delete Team</button>
+    <span class="sep"></span>
+    <button class="btn btn-add" id="task-add">+ Add Task</button>
+    <button class="btn btn-del" id="task-del">Delete Task</button>
+  </div>
+  <div class="topbar-right">
+    <div class="sync-group">
+      <span class="sync-status-text" id="sync-status-text">Idle</span>
+      <button id="sync-btn" class="sync-btn green">Sync</button>
+    </div>
+  </div>
 </header>
 
 <!-- ================ MAIN LAYOUT ================ -->
@@ -80,11 +87,47 @@
   </div>
 </div>
 
+<!-- ================ TEAM EDIT MODAL ================ -->
+<div id="team-edit-overlay" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <h2>Edit Team</h2>
+    <label for="team-edit-name">Team Name</label>
+    <input id="team-edit-name" type="text">
+    <label for="team-edit-members">Members (comma separated)</label>
+    <input id="team-edit-members" type="text" placeholder="Alice, Bob, Charlie">
+    <div class="modal-btns">
+      <button id="team-edit-ok" class="mbtn-ok">Save</button>
+      <button id="team-edit-cancel" class="mbtn-cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ===================================================================
 //  Status options
 // ===================================================================
-var STATUSES = ['Backlog', 'Pending', 'In Progress', 'In Review', 'Done', 'Blocked', 'On Hold'];
+var STATUSES = ['Pending', 'In Progress', 'In Review', 'Done', 'On Hold'];
+
+// Pastel colors for assignee tags
+var PASTELS = [
+  '#FFB3BA', '#BAFFC9', '#BAE1FF', '#FFFFBA', '#E8BAFF',
+  '#FFD9BA', '#BAFFF5', '#FFC3E0', '#C3FFC3', '#C3D9FF'
+];
+
+function pastelFor(name) {
+  var hash = 0;
+  for (var i = 0; i < name.length; i++) hash = ((hash << 5) - hash) + name.charCodeAt(i);
+  return PASTELS[Math.abs(hash) % PASTELS.length];
+}
+
+function statusClass(s) {
+  if (s === 'Pending') return 'ps-pending';
+  if (s === 'In Progress') return 'ps-progress';
+  if (s === 'In Review') return 'ps-review';
+  if (s === 'Done') return 'ps-done';
+  if (s === 'On Hold') return 'ps-hold';
+  return '';
+}
 
 // ===================================================================
 //  Seed data
@@ -119,7 +162,7 @@ var BRANCH = 'main';
 //  Sync helpers
 // ===================================================================
 var syncBtn = document.getElementById('sync-btn');
-var syncStatus = document.getElementById('sync-status');
+var syncStatus = document.getElementById('sync-status-text');
 
 function setSyncColor(state) {
   syncBtn.className = 'sync-btn ' + state;
@@ -289,8 +332,12 @@ function renderTasks() {
     }
 
     var assignText = '';
-    if (t.person) assignText = '[' + t.person + ']';
-    else if (teamName) assignText = '[' + teamName + ']';
+    var assignHtml = '';
+    if (t.person) {
+      assignHtml = '<span class="pastel-tag" style="background:' + pastelFor(t.person) + ';color:#000000">' + esc(t.person) + '</span>';
+    } else if (teamName) {
+      assignHtml = '<span class="pastel-tag" style="background:' + pastelFor(teamName) + ';color:#000000">' + esc(teamName) + '</span>';
+    }
 
     var expanded = (t.id === '_expanded') ? ' open' : '';
 
@@ -298,8 +345,8 @@ function renderTasks() {
       '<div class="task-top">' +
         '<span class="task-expand" data-tid="' + t.id + '">&#9660;</span>' +
         '<span class="task-title">' + esc(t.title) + '</span>' +
-        '<span class="task-assign">' + esc(assignText) + '</span>' +
-        '<select class="task-status-select" data-tid="' + t.id + '">' +
+        assignHtml +
+        '<select class="task-status-select ' + statusClass(t.status) + '" data-tid="' + t.id + '">' +
           statusOptions(t.status) +
         '</select>' +
       '</div>' +
@@ -338,6 +385,8 @@ function renderTasks() {
           for (var j = 0; j < data.projects[i].tasks.length; j++) {
             if (data.projects[i].tasks[j].id === tid) {
               data.projects[i].tasks[j].status = this.value;
+              // Update dropdown color
+              this.className = 'task-status-select ' + statusClass(this.value);
               persist();
               return;
             }
@@ -481,6 +530,39 @@ document.getElementById('team-modal-ok').addEventListener('click', function() {
 
 document.getElementById('team-modal-cancel').addEventListener('click', function() {
   teamModalOverlay.style.display = 'none';
+});
+
+document.getElementById('team-edit').addEventListener('click', function() {
+  if (selTeam === null) { alert('Select a team first.'); return; }
+  var team = null;
+  for (var i = 0; i < data.teams.length; i++) {
+    if (data.teams[i].id === selTeam) { team = data.teams[i]; break; }
+  }
+  if (!team) return;
+  document.getElementById('team-edit-name').value = team.name;
+  document.getElementById('team-edit-members').value = team.members.join(', ');
+  document.getElementById('team-edit-overlay').style.display = 'flex';
+});
+
+document.getElementById('team-edit-ok').addEventListener('click', function() {
+  var name = document.getElementById('team-edit-name').value.trim();
+  if (!name) { alert('Team name required.'); return; }
+  var members = document.getElementById('team-edit-members').value.split(',').map(function(s) { return s.trim(); }).filter(function(s) { return s; });
+  if (members.length === 0) { alert('At least one member required.'); return; }
+  for (var i = 0; i < data.teams.length; i++) {
+    if (data.teams[i].id === selTeam) {
+      data.teams[i].name = name;
+      data.teams[i].members = members;
+      break;
+    }
+  }
+  persist();
+  document.getElementById('team-edit-overlay').style.display = 'none';
+  renderAll();
+});
+
+document.getElementById('team-edit-cancel').addEventListener('click', function() {
+  document.getElementById('team-edit-overlay').style.display = 'none';
 });
 
 document.getElementById('team-del').addEventListener('click', function() {

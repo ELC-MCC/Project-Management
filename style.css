@@ -30,7 +30,7 @@ button { cursor: pointer; }
   display: flex;
   align-items: center;
   gap: 6px;
-  height: 40px;
+  height: 44px;
   padding: 0 8px;
   border-bottom: 2px solid #CC9700;
   background: #000000;
@@ -38,14 +38,27 @@ button { cursor: pointer; }
   overflow-x: auto;
 }
 
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
 .topbar .btn {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: bold;
-  padding: 4px 12px;
+  padding: 6px 14px;
   border: 2px solid;
   cursor: pointer;
   white-space: nowrap;
-  height: 28px;
+  height: 32px;
 }
 
 .topbar .btn-add { background: #CC9700; color: #000000; border-color: #CC9700; }
@@ -54,37 +67,44 @@ button { cursor: pointer; }
 .topbar .btn-del { background: #CC0000; color: #FFFFFF; border-color: #CC0000; }
 .topbar .btn-del:hover { background: #000000; color: #CC0000; }
 
-.topbar .sep { width: 0; height: 20px; border-left: 1px solid #555555; margin: 0 4px; }
+.topbar .btn-edit { background: #6666FF; color: #FFFFFF; border-color: #6666FF; }
+.topbar .btn-edit:hover { background: #000000; color: #6666FF; }
 
-.topbar .sync-btn {
-  margin-left: auto;
+.topbar .sep { width: 0; height: 24px; border-left: 2px solid #555555; margin: 0 4px; }
+
+.sync-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sync-status-text {
   font-size: 12px;
   font-weight: bold;
-  padding: 4px 14px;
+  white-space: nowrap;
+}
+
+.sync-btn {
+  font-size: 13px;
+  font-weight: bold;
+  padding: 6px 16px;
   border: 2px solid;
   cursor: pointer;
   white-space: nowrap;
-  height: 28px;
+  height: 32px;
 }
-.topbar .sync-btn.green { background: #00CC00; color: #000000; border-color: #00CC00; }
-.topbar .sync-btn.green:hover { background: #000000; color: #00CC00; }
-.topbar .sync-btn.red { background: #CC0000; color: #FFFFFF; border-color: #CC0000; }
-.topbar .sync-btn.red:hover { background: #000000; color: #CC0000; }
-.topbar .sync-btn.yellow { background: #CC9700; color: #000000; border-color: #CC9700; }
-.topbar .sync-btn.yellow:hover { background: #000000; color: #CC9700; }
-
-.topbar .sync-status {
-  font-size: 11px;
-  font-weight: bold;
-  white-space: nowrap;
-  margin-left: 4px;
-}
+.sync-btn.green { background: #00CC00; color: #000000; border-color: #00CC00; }
+.sync-btn.green:hover { background: #000000; color: #00CC00; }
+.sync-btn.red { background: #CC0000; color: #FFFFFF; border-color: #CC0000; }
+.sync-btn.red:hover { background: #000000; color: #CC0000; }
+.sync-btn.yellow { background: #CC9700; color: #000000; border-color: #CC9700; }
+.sync-btn.yellow:hover { background: #000000; color: #CC9700; }
 
 /* ============== LAYOUT ============== */
 
 .main {
   display: flex;
-  height: calc(100% - 40px);
+  height: calc(100% - 44px);
 }
 
 .panel {
@@ -168,13 +188,20 @@ button { cursor: pointer; }
 
 .task-status-select {
   font-size: 10px;
-  padding: 1px 4px;
-  border: 1px solid #CC9700;
+  padding: 2px 6px;
+  border: none;
   background: #000000;
   color: #CC9700;
   cursor: pointer;
   flex-shrink: 0;
+  font-weight: bold;
 }
+
+.task-status-select.ps-pending { background: #CCAA00; color: #000000; }
+.task-status-select.ps-progress { background: #2255CC; color: #FFFFFF; }
+.task-status-select.ps-review { background: #7733AA; color: #FFFFFF; }
+.task-status-select.ps-done { background: #008800; color: #FFFFFF; }
+.task-status-select.ps-hold { background: #CC6600; color: #000000; }
 
 .task-desc-wrap {
   display: none;
@@ -279,4 +306,13 @@ button { cursor: pointer; }
   border: 1px solid #888888;
   color: #888888;
   margin: 2px;
+}
+
+.pastel-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 2px 8px;
+  margin: 1px;
+  border: none;
 }
