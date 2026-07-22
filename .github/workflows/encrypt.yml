@@ -1,4 +1,4 @@
-name: Encrypt Page
+name: Encrypt and Deploy
 
 on:
   push:
@@ -12,12 +12,8 @@ jobs:
     permissions:
       contents: write
       pages: write
+      id-token: write
     steps:
-      - name: Install Git
-        run: |
-          apt-get clean && apt-get update -y
-          apt-get install -y git
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - uses: actions/checkout@v4
       - name: Install staticrypt
         run: npm install -g staticrypt@3.*
@@ -43,19 +39,14 @@ jobs:
           --template-button "Unlock"
           --template-color-primary "#CC9700"
           --template-color-secondary "#000000"
-      - name: Clean up
+      - name: Prepare deploy folder
         run: |
-          mv encrypted/index.html index.html
-          rm -r encrypted
-      - name: Commit files
-        run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add .
-          git commit -m "encrypted files"
-      - name: Push changes
-        uses: ad-m/github-push-action@v0.8.0
+          mkdir deploy
+          mv encrypted/index.html deploy/index.html
+      - name: Deploy to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
-          force: true
+          publish_dir: ./deploy
+          publish_branch: gh-pages
+          force_orphan: true

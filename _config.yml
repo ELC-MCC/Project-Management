@@ -1,6 +1,0 @@
-exclude:
-  - main.html
-  - embed.py
-  - password_template.html
-  - .staticrypt.json
-  - .github/
