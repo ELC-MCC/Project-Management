@@ -84,9 +84,43 @@ button:hover {
 
 /* Layout */
 
+.sync-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  height: 32px;
+  padding: 0 10px;
+  border-bottom: 2px solid #CC9700;
+  background: #000000;
+}
+
+.sync-top-btn {
+  background: #FFFFFF;
+  color: #000000;
+  border: 2px solid #FFFFFF;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 2px 14px;
+  cursor: pointer;
+}
+
+.sync-top-btn:hover {
+  background: #CC9700;
+  border-color: #CC9700;
+  color: #000000;
+}
+
+.sync-top-status {
+  font-size: 11px;
+  font-family: "Courier New", Courier, monospace;
+  color: #CC9700;
+}
+
 .main {
   display: flex;
-  height: 100%;
+  height: calc(100% - 32px);
 }
 
 .panel {
@@ -201,21 +235,4 @@ button:hover {
 .panel-foot button {
   font-size: 11px;
   padding: 4px 10px;
-}
-
-.sync-btn {
-  margin-left: auto;
-  font-size: 11px;
-  padding: 4px 10px;
-}
-
-.sync-btn:hover {
-  background: #CC9700;
-  color: #000000;
-}
-
-.sync-status {
-  font-size: 10px;
-  white-space: nowrap;
-  padding: 4px 4px;
 }
