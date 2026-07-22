@@ -4,26 +4,53 @@
       "id": 1,
       "name": "Website Redesign",
       "tasks": [
-        { "id": 1, "title": "Wireframe homepage", "status": "Done" },
-        { "id": 2, "title": "Design color palette", "status": "In Progress" },
-        { "id": 3, "title": "Build components", "status": "Pending" }
+        {
+          "id": 2,
+          "title": "Design color palette",
+          "status": "In Progress"
+        },
+        {
+          "id": 3,
+          "title": "Build components",
+          "status": "Pending"
+        }
       ]
     },
     {
       "id": 2,
       "name": "Mobile App v2",
       "tasks": [
-        { "id": 1, "title": "Set up CI/CD", "status": "Done" },
-        { "id": 2, "title": "Implement dark mode", "status": "In Progress" }
+        {
+          "id": 1,
+          "title": "Set up CI/CD",
+          "status": "Done"
+        },
+        {
+          "id": 2,
+          "title": "Implement dark mode",
+          "status": "In Progress"
+        }
       ]
     },
     {
       "id": 3,
       "name": "Database Migration",
       "tasks": [
-        { "id": 1, "title": "Audit schema", "status": "Done" },
-        { "id": 2, "title": "Write migration scripts", "status": "Pending" },
-        { "id": 3, "title": "Test rollback plan", "status": "Pending" }
+        {
+          "id": 1,
+          "title": "Audit schema",
+          "status": "Done"
+        },
+        {
+          "id": 2,
+          "title": "Write migration scripts",
+          "status": "Pending"
+        },
+        {
+          "id": 3,
+          "title": "Test rollback plan",
+          "status": "Pending"
+        }
       ]
     }
   ]
