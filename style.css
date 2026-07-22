@@ -5,7 +5,38 @@ input, button, select, textarea { font-family: inherit; font-size: inherit; back
 input:focus, button:focus, select:focus { outline: none; }
 button { cursor: pointer; }
 
-/* ============== TOP BAR (sync only) ============== */
+/* ============== LOGIN OVERLAY ============== */
+.login-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: #000000;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 200;
+}
+.login-overlay.hidden { display: none; }
+.login-box {
+  border: 2px solid #CC9700;
+  padding: 24px 32px;
+  text-align: center;
+  width: 320px;
+}
+.login-box h1 {
+  font-size: 16px; font-weight: bold; margin-bottom: 4px;
+  text-transform: uppercase; letter-spacing: 1px;
+}
+.login-box p { font-size: 12px; margin-bottom: 16px; }
+.login-box input, .login-box select {
+  width: 100%; margin-bottom: 8px; text-align: center;
+  font-family: "Courier New", Courier, monospace;
+}
+.login-box .err { font-size: 11px; min-height: 16px; margin-bottom: 8px; color: #FF0000; }
+.login-box button {
+  width: 100%; font-weight: bold; padding: 8px;
+  background: #CC9700; color: #000000; border: 2px solid #CC9700;
+  cursor: pointer;
+}
+.login-box button:hover { background: #000000; color: #CC9700; }
+
+/* ============== SYNC BAR ============== */
 .topbar {
   display: flex; align-items: center; justify-content: flex-end; gap: 6px;
   height: 36px; padding: 0 8px;
@@ -41,6 +72,11 @@ button { cursor: pointer; }
 .panel-foot .btn-del:hover { background: #000000; color: #CC0000; }
 .panel-foot .btn-edit { background: #6666FF; color: #FFFFFF; border-color: #6666FF; }
 .panel-foot .btn-edit:hover { background: #000000; color: #6666FF; }
+
+/* ============== MEMBER MODE ============== */
+.member-mode .panel-foot { display: none !important; }
+.member-mode .topbar { display: none !important; }
+.member-mode .main { height: 100%; }
 
 /* ============== ITEMS ============== */
 .proj-item, .team-item, .task-item { padding: 8px 10px; cursor: pointer; border-bottom: 1px solid #333333; font-size: 12px; border-left: 3px solid transparent; }

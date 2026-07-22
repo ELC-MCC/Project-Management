@@ -9,6 +9,20 @@
 </head>
 <body>
 
+<div id="login-overlay" class="login-overlay">
+  <div class="login-box">
+    <h1>ELC Project Management</h1>
+    <p>Select role and enter password</p>
+    <select id="login-role">
+      <option value="officer">Officer</option>
+      <option value="member">Member</option>
+    </select>
+    <input type="password" id="login-pw" placeholder="Password">
+    <div class="err" id="login-err"></div>
+    <button id="login-btn">Enter</button>
+  </div>
+</div>
+
 <header class="topbar">
   <div class="sync-group">
     <span class="sync-status-text" id="sync-status-text">Idle</span>
@@ -192,6 +206,41 @@ var selProj = null;
 var selTeam = null;
 var selTask = null;
 var showArchived = false;
+var userRole = null;
+
+// ===================================================================
+//  Role login
+// ===================================================================
+document.getElementById('login-btn').addEventListener('click', function() {
+  var role = document.getElementById('login-role').value;
+  var pw = document.getElementById('login-pw').value;
+  var errEl = document.getElementById('login-err');
+
+  if (role === 'officer') {
+    if (typeof OFFICER_PASSWORD !== 'undefined' && pw === OFFICER_PASSWORD) {
+      userRole = 'officer';
+      document.getElementById('login-overlay').classList.add('hidden');
+      document.body.classList.remove('member-mode');
+      renderAll();
+    } else {
+      errEl.textContent = 'Incorrect password';
+    }
+  } else if (role === 'member') {
+    if (pw === 'ELC2026') {
+      userRole = 'member';
+      document.getElementById('login-overlay').classList.add('hidden');
+      document.body.classList.add('member-mode');
+      renderAll();
+    } else {
+      errEl.textContent = 'Incorrect password';
+    }
+  }
+  document.getElementById('login-pw').value = '';
+});
+
+document.getElementById('login-pw').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') document.getElementById('login-btn').click();
+});
 
 // ===================================================================
 function initData() {
