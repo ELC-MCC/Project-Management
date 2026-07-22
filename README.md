@@ -6,9 +6,28 @@ A password-protected project management tool for teams. Organize projects, teams
 
 ## Login
 
-Open the site and enter the team password. The page decrypts and the app loads.
+Open the site and enter the team password. The page decrypts.
 
-The first time you visit, sample data is pre-loaded (Website Redesign, Mobile App v2, Design Team, Dev Team). The app automatically fetches the latest shared data from the repo on load.
+Then a **role selection** screen appears:
+
+- **Member** — click Enter, no password needed. Can view projects/teams/tasks, change task statuses, edit descriptions, and use Sync. No Add/Delete/Edit buttons.
+- **Officer** — requires the Officer password. Full access to create, edit, and delete everything.
+
+---
+
+## Roles
+
+### Member
+- View all projects, teams, and tasks
+- Change task status (dropdown) and edit task descriptions
+- Use Sync to push updates to the repo
+- **Cannot** add, delete, or edit projects, teams, or team membership
+
+### Officer
+- Everything Member can do, plus:
+- Add and delete projects
+- Add, edit, and delete teams
+- Add and delete tasks
 
 ---
 
