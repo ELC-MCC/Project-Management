@@ -1,11 +1,7 @@
-/* ELC Project Management -- Minimal stylesheet
-   Black (#000000) and MCC Gold (#CC9700) with colored status badges. */
+/* ELC Project Management -- Full layout
+   Black (#000000) and MCC Gold (#CC9700) with colored buttons */
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 html, body {
   height: 100%;
@@ -15,7 +11,7 @@ html, body {
   font-size: 14px;
 }
 
-input, button, textarea {
+input, button, select, textarea {
   font-family: inherit;
   font-size: inherit;
   background: #000000;
@@ -24,103 +20,71 @@ input, button, textarea {
   padding: 6px 10px;
 }
 
-input:focus, button:focus {
-  outline: none;
-}
+input:focus, button:focus, select:focus { outline: none; }
 
-button {
-  cursor: pointer;
-}
+button { cursor: pointer; }
 
-button:hover {
-  background: #CC9700;
-  color: #000000;
-}
+/* ============== TOP BAR ============== */
 
-/* Login */
-
-.login-wrap {
+.topbar {
   display: flex;
   align-items: center;
-  justify-content: center;
-  height: 100%;
-}
-
-.login-box {
-  border: 2px solid #CC9700;
-  padding: 24px 32px;
-  text-align: center;
-  width: 300px;
-}
-
-.login-box h1 {
-  font-size: 18px;
-  font-weight: normal;
-  margin-bottom: 4px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.login-box p {
-  font-size: 12px;
-  margin-bottom: 20px;
-}
-
-.login-box input {
-  width: 100%;
-  margin-bottom: 8px;
-  text-align: center;
-}
-
-.login-box .err {
-  font-size: 11px;
-  min-height: 16px;
-  margin-bottom: 8px;
-}
-
-.login-box button {
-  width: 100%;
-}
-
-/* Layout */
-
-.sync-topbar {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-  height: 32px;
-  padding: 0 10px;
+  gap: 6px;
+  height: 40px;
+  padding: 0 8px;
   border-bottom: 2px solid #CC9700;
   background: #000000;
+  flex-wrap: nowrap;
+  overflow-x: auto;
 }
 
-.sync-top-btn {
-  background: #FFFFFF;
-  color: #000000;
-  border: 2px solid #FFFFFF;
-  font-family: "Courier New", Courier, monospace;
+.topbar .btn {
+  font-size: 12px;
+  font-weight: bold;
+  padding: 4px 12px;
+  border: 2px solid;
+  cursor: pointer;
+  white-space: nowrap;
+  height: 28px;
+}
+
+.topbar .btn-add { background: #CC9700; color: #000000; border-color: #CC9700; }
+.topbar .btn-add:hover { background: #000000; color: #CC9700; }
+
+.topbar .btn-del { background: #CC0000; color: #FFFFFF; border-color: #CC0000; }
+.topbar .btn-del:hover { background: #000000; color: #CC0000; }
+
+.topbar .sep { width: 0; height: 20px; border-left: 1px solid #555555; margin: 0 4px; }
+
+.topbar .sync-btn {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 4px 14px;
+  border: 2px solid;
+  cursor: pointer;
+  white-space: nowrap;
+  height: 28px;
+}
+.topbar .sync-btn.green { background: #00CC00; color: #000000; border-color: #00CC00; }
+.topbar .sync-btn.green:hover { background: #000000; color: #00CC00; }
+.topbar .sync-btn.red { background: #CC0000; color: #FFFFFF; border-color: #CC0000; }
+.topbar .sync-btn.red:hover { background: #000000; color: #CC0000; }
+.topbar .sync-btn.yellow { background: #CC9700; color: #000000; border-color: #CC9700; }
+.topbar .sync-btn.yellow:hover { background: #000000; color: #CC9700; }
+
+.topbar .sync-status {
   font-size: 11px;
   font-weight: bold;
-  padding: 2px 14px;
-  cursor: pointer;
+  white-space: nowrap;
+  margin-left: 4px;
 }
 
-.sync-top-btn:hover {
-  background: #CC9700;
-  border-color: #CC9700;
-  color: #000000;
-}
-
-.sync-top-status {
-  font-size: 11px;
-  font-family: "Courier New", Courier, monospace;
-  color: #CC9700;
-}
+/* ============== LAYOUT ============== */
 
 .main {
   display: flex;
-  height: calc(100% - 32px);
+  height: calc(100% - 40px);
 }
 
 .panel {
@@ -129,24 +93,16 @@ button:hover {
   border-right: 2px solid #CC9700;
 }
 
-.panel:last-child {
-  border-right: none;
-}
+.panel:last-child { border-right: none; }
 
-.panel-left {
-  width: 240px;
-  min-width: 160px;
-  flex-shrink: 0;
-}
-
-.panel-right {
-  flex: 1;
-}
+.panel-left { width: 200px; min-width: 140px; flex-shrink: 0; }
+.panel-mid { width: 200px; min-width: 140px; flex-shrink: 0; }
+.panel-right { flex: 1; }
 
 .panel-head {
-  padding: 10px 12px;
+  padding: 8px 10px;
   border-bottom: 2px solid #CC9700;
-  font-size: 16px;
+  font-size: 13px;
   font-weight: bold;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -160,66 +116,99 @@ button:hover {
 .panel-foot {
   display: flex;
   gap: 4px;
-  padding: 6px 8px;
+  padding: 5px 6px;
   border-top: 2px solid #CC9700;
   flex-wrap: wrap;
-  align-items: center;
 }
 
-/* Items */
+/* ============== ITEMS ============== */
 
 .proj-item,
+.team-item,
 .task-item {
-  padding: 8px 12px;
+  padding: 7px 10px;
   cursor: pointer;
   border-bottom: 1px solid #555555;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .proj-item:hover,
-.task-item:hover {
-  background: #CC9700;
-  color: #000000;
-}
+.team-item:hover,
+.task-item:hover { background: #111111; }
 
 .proj-item.active,
-.task-item.active {
-  background: #CC9700;
-  color: #000000;
+.team-item.active,
+.task-item.active { background: #CC9700; color: #000000; }
+
+/* Task layout */
+.task-item { padding: 6px 10px; }
+.task-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.task-name {
-  flex: 1;
-  margin-right: 8px;
-}
-
-/* Status badges -- filled colored box with black text */
-
-.task-status {
+.task-expand {
   font-size: 10px;
-  font-weight: bold;
-  padding: 3px 8px;
-  white-space: nowrap;
-  color: #000000;
+  cursor: pointer;
+  background: none;
+  border: 1px solid #555555;
+  color: #CC9700;
+  padding: 0 4px;
+  flex-shrink: 0;
 }
 
-.task-status.done {
-  background: #00FF00;
+.task-title { flex: 1; }
+
+.task-assign {
+  font-size: 10px;
+  color: #888888;
+  margin-right: 4px;
 }
 
-.task-status.in-progress {
-  background: #0000FF;
-  color: #FFFFFF;
+.task-status-select {
+  font-size: 10px;
+  padding: 1px 4px;
+  border: 1px solid #CC9700;
+  background: #000000;
+  color: #CC9700;
+  cursor: pointer;
+  flex-shrink: 0;
 }
 
-.task-status.pending {
-  background: #FFFF00;
+.task-desc-wrap {
+  display: none;
+  margin-top: 4px;
+  padding-left: 20px;
+}
+.task-desc-wrap.open { display: block; }
+
+.task-desc-text {
+  font-size: 11px;
+  color: #AAAAAA;
+  border: 1px solid #555555;
+  background: #0a0a0a;
+  padding: 4px 6px;
+  width: 100%;
+  min-height: 32px;
+  resize: vertical;
 }
 
-/* Empty state */
+/* ============== TEAM MEMBER LIST ============== */
+
+.team-members {
+  font-size: 10px;
+  color: #888888;
+  padding: 4px 10px 6px;
+  border-bottom: 1px solid #555555;
+}
+
+.team-members span {
+  display: inline-block;
+  margin-right: 4px;
+}
+
+/* ============== EMPTY STATE ============== */
 
 .empty {
   display: flex;
@@ -230,9 +219,64 @@ button:hover {
   color: #555555;
 }
 
-/* Footer buttons */
+/* ============== MODAL ============== */
 
-.panel-foot button {
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-box {
+  background: #111111;
+  border: 2px solid #CC9700;
+  padding: 20px 24px;
+  width: 360px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-box h2 {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.modal-box label {
+  display: block;
   font-size: 11px;
-  padding: 4px 10px;
+  margin-bottom: 4px;
+  margin-top: 10px;
+}
+
+.modal-box input,
+.modal-box select,
+.modal-box textarea {
+  width: 100%;
+  font-size: 12px;
+}
+
+.modal-box .modal-btns {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.modal-box .modal-btns button { flex: 1; font-size: 12px; font-weight: bold; padding: 6px; }
+.mbtn-ok { background: #CC9700; color: #000000; border-color: #CC9700; }
+.mbtn-cancel { background: #333333; color: #CC9700; border-color: #555555; }
+
+/* Team tags in task detail */
+.team-tag {
+  display: inline-block;
+  font-size: 10px;
+  padding: 1px 6px;
+  border: 1px solid #888888;
+  color: #888888;
+  margin: 2px;
 }

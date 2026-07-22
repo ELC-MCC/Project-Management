@@ -9,41 +9,107 @@
 </head>
 <body>
 
-<header class="sync-topbar">
-  <span id="sync-status" class="sync-top-status">Idle</span>
-  <button id="sync-btn" class="sync-top-btn">Sync</button>
+<!-- ================ TOP BAR ================ -->
+<header class="topbar">
+  <span class="sync-status" id="sync-status">Idle</span>
+  <button class="btn btn-add" id="proj-add">+ Project</button>
+  <button class="btn btn-del" id="proj-del">Project</button>
+  <span class="sep"></span>
+  <button class="btn btn-add" id="team-add">+ Team</button>
+  <button class="btn btn-del" id="team-del">Team</button>
+  <span class="sep"></span>
+  <button class="btn btn-add" id="task-add">+ Task</button>
+  <button class="btn btn-del" id="task-del">Task</button>
+  <button id="sync-btn" class="sync-btn green">Sync</button>
 </header>
 
+<!-- ================ MAIN LAYOUT ================ -->
 <div class="main">
 
   <!-- LEFT: Projects -->
   <div class="panel panel-left">
     <div class="panel-head">Projects</div>
     <div class="panel-body" id="proj-list"></div>
-    <div class="panel-foot">
-      <button id="proj-add">+ Add</button>
-      <button id="proj-del">Delete</button>
-    </div>
+  </div>
+
+  <!-- MIDDLE: Teams -->
+  <div class="panel panel-mid">
+    <div class="panel-head" id="team-head">Teams</div>
+    <div class="panel-body" id="team-list"></div>
   </div>
 
   <!-- RIGHT: Tasks -->
   <div class="panel panel-right">
-    <div class="panel-head" id="task-head">Tasks -- (select a project)</div>
+    <div class="panel-head" id="task-head">Tasks</div>
     <div class="panel-body" id="task-list"></div>
-    <div class="panel-foot">
-      <button id="task-add">+ Add</button>
-      <button id="task-toggle">Toggle Status</button>
-      <button id="task-del">Delete</button>
-    </div>
   </div>
 
 </div>
 
+<!-- ================ MODAL OVERLAY ================ -->
+<div id="modal-overlay" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <h2 id="modal-title">New Task</h2>
+    <label for="modal-title-input">Title</label>
+    <input id="modal-title-input" type="text">
+    <label for="modal-desc-input">Description</label>
+    <textarea id="modal-desc-input" rows="3"></textarea>
+    <label for="modal-team-select">Assign Team</label>
+    <select id="modal-team-select"></select>
+    <label for="modal-person-select">Assign Person</label>
+    <select id="modal-person-select"></select>
+    <div class="modal-btns">
+      <button id="modal-ok" class="mbtn-ok">OK</button>
+      <button id="modal-cancel" class="mbtn-cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================ TEAM MODAL ================ -->
+<div id="team-modal-overlay" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <h2 id="team-modal-title">New Team</h2>
+    <label for="team-modal-name">Team Name</label>
+    <input id="team-modal-name" type="text">
+    <label for="team-modal-members">Members (comma separated)</label>
+    <input id="team-modal-members" type="text" placeholder="Alice, Bob, Charlie">
+    <div class="modal-btns">
+      <button id="team-modal-ok" class="mbtn-ok">OK</button>
+      <button id="team-modal-cancel" class="mbtn-cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <script>
+// ===================================================================
+//  Status options
+// ===================================================================
+var STATUSES = ['Backlog', 'Pending', 'In Progress', 'In Review', 'Done', 'Blocked', 'On Hold'];
+
+// ===================================================================
+//  Seed data
+// ===================================================================
+var SEED_DATA = {
+  teams: [
+    { id: 1, name: 'Design Team', members: ['Alice', 'Bob'] },
+    { id: 2, name: 'Dev Team', members: ['Charlie', 'Diana'] }
+  ],
+  projects: [
+    { id: 1, name: 'Website Redesign', teams: [1], tasks: [
+      { id: 1, title: 'Wireframe homepage', desc: '', status: 'Done', team: 1, person: 'Alice' },
+      { id: 2, title: 'Design color palette', desc: 'Pick primary and accent colors', status: 'In Progress', team: 1, person: 'Bob' },
+      { id: 3, title: 'Build components', desc: '', status: 'Pending', team: 0, person: '' }
+    ]},
+    { id: 2, name: 'Mobile App v2', teams: [2], tasks: [
+      { id: 1, title: 'Set up CI/CD', desc: '', status: 'Done', team: 2, person: 'Charlie' },
+      { id: 2, title: 'Implement dark mode', desc: '', status: 'In Progress', team: 2, person: 'Diana' }
+    ]}
+  ]
+};
+
 // ===================================================================
 //  Config
 // ===================================================================
-
 var REPO_OWNER = 'ELC-MCC';
 var REPO_NAME = 'Project-Management';
 var DATA_PATH = 'data.json';
@@ -52,13 +118,15 @@ var BRANCH = 'main';
 // ===================================================================
 //  Sync helpers
 // ===================================================================
+var syncBtn = document.getElementById('sync-btn');
+var syncStatus = document.getElementById('sync-status');
 
-var syncStatusEl = document.getElementById('sync-status');
-var syncBtnEl = document.getElementById('sync-btn');
+function setSyncColor(state) {
+  syncBtn.className = 'sync-btn ' + state;
+}
 
-function setSyncStatus(text, isError) {
-  syncStatusEl.textContent = text;
-  syncStatusEl.style.color = isError ? '#FF0000' : '#CC9700';
+function setSyncText(text) {
+  syncStatus.textContent = text;
 }
 
 async function fetchFromRepo() {
@@ -69,111 +137,86 @@ async function fetchFromRepo() {
 }
 
 async function pushToRepo(data) {
-  // Get current file SHA first
   var getUrl = 'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/' + DATA_PATH;
-  var getRes = await fetch(getUrl, {
-    headers: { 'Authorization': 'Bearer ' + API_TOKEN }
-  });
+  var getRes = await fetch(getUrl, { headers: { 'Authorization': 'Bearer ' + API_TOKEN } });
   if (!getRes.ok) throw new Error('Failed to get file info: ' + getRes.status);
   var meta = await getRes.json();
-
-  // Push new content
   var content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
   var putRes = await fetch(getUrl, {
     method: 'PUT',
-    headers: {
-      'Authorization': 'Bearer ' + API_TOKEN,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      message: 'sync data',
-      content: content,
-      sha: meta.sha
-    })
+    headers: { 'Authorization': 'Bearer ' + API_TOKEN, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message: 'sync data', content: content, sha: meta.sha })
   });
   if (!putRes.ok) throw new Error('Push failed: ' + putRes.status);
 }
 
 // ===================================================================
-//  Seed data
-// ===================================================================
-
-var SEED_DATA = {
-  projects: [
-    { id: 1, name: 'Website Redesign', tasks: [
-      { id: 1, title: 'Wireframe homepage', status: 'Done' },
-      { id: 2, title: 'Design color palette', status: 'In Progress' },
-      { id: 3, title: 'Build components', status: 'Pending' }
-    ]},
-    { id: 2, name: 'Mobile App v2', tasks: [
-      { id: 1, title: 'Set up CI/CD', status: 'Done' },
-      { id: 2, title: 'Implement dark mode', status: 'In Progress' }
-    ]},
-    { id: 3, name: 'Database Migration', tasks: [
-      { id: 1, title: 'Audit schema', status: 'Done' },
-      { id: 2, title: 'Write migration scripts', status: 'Pending' },
-      { id: 3, title: 'Test rollback plan', status: 'Pending' }
-    ]}
-  ]
-};
-
-// ===================================================================
 //  Data layer
 // ===================================================================
-
 function loadLocal() {
   var raw = localStorage.getItem('elc_data');
   if (!raw) return null;
   try { return JSON.parse(raw); } catch(e) { return null; }
 }
-
 function saveLocal(data) {
   localStorage.setItem('elc_data', JSON.stringify(data));
 }
-
 function getData() {
   var d = loadLocal();
-  if (!d) { saveLocal(SEED_DATA); return SEED_DATA; }
+  if (!d) { saveLocal(SEED_DATA); return JSON.parse(JSON.stringify(SEED_DATA)); }
   return d;
 }
 
 var data = getData();
 var selProj = null;
+var selTeam = null;
 var selTask = null;
 
 // ===================================================================
-//  Init: try to fetch shared data from repo
+//  Init: fetch shared data
 // ===================================================================
-
-if (API_TOKEN !== '__SYNC_TOKEN__') {
-  setSyncStatus('Loading...');
-  fetchFromRepo().then(function(remote) {
-    data = remote;
-    saveLocal(data);
-    renderProjects();
-    if (data.projects.length > 0) {
-      selProj = data.projects[0].id;
-      renderProjects();
-      renderTasks();
-    }
-    setSyncStatus('Synced');
-  }).catch(function() {
-    // Fall back to local data
-    setSyncStatus('Offline');
-  });
+function initData() {
+  if (typeof API_TOKEN !== 'undefined' && API_TOKEN !== '') {
+    setSyncText('Loading...');
+    setSyncColor('yellow');
+    fetchFromRepo().then(function(remote) {
+      data = remote;
+      saveLocal(data);
+      setSyncText('Synced');
+      setSyncColor('green');
+      renderAll();
+    }).catch(function() {
+      setSyncText('Offline');
+      setSyncColor('red');
+      renderAll();
+    });
+  } else {
+    renderAll();
+  }
 }
 
 // ===================================================================
 //  DOM refs
 // ===================================================================
-
 var projListEl = document.getElementById('proj-list');
+var teamListEl = document.getElementById('team-list');
+var teamHeadEl = document.getElementById('team-head');
 var taskListEl = document.getElementById('task-list');
 var taskHeadEl = document.getElementById('task-head');
 
 // ===================================================================
 //  Render helpers
 // ===================================================================
+function renderAll() {
+  renderProjects();
+  renderTeams();
+  renderTasks();
+}
+
+function getProjectTeams(proj) {
+  if (!proj || !proj.teams) return [];
+  return data.teams.filter(function(t) { return proj.teams.indexOf(t.id) >= 0; });
+}
 
 function renderProjects() {
   projListEl.innerHTML = '';
@@ -184,24 +227,38 @@ function renderProjects() {
     div.addEventListener('click', function() { selectProject(p.id); });
     projListEl.appendChild(div);
   });
-
-  if (data.projects.length === 0) {
-    projListEl.innerHTML = '<div class="empty">No projects</div>';
-  }
+  if (data.projects.length === 0) projListEl.innerHTML = '<div class="empty">No projects</div>';
 }
 
 function selectProject(id) {
   selProj = id;
+  selTeam = null;
   selTask = null;
-  renderProjects();
-  renderTasks();
+  renderAll();
 }
 
-function statusClass(status) {
-  if (status === 'Done') return 'done';
-  if (status === 'In Progress') return 'in-progress';
-  if (status === 'Pending') return 'pending';
-  return '';
+function renderTeams() {
+  var proj = null;
+  for (var i = 0; i < data.projects.length; i++) {
+    if (data.projects[i].id === selProj) { proj = data.projects[i]; break; }
+  }
+  if (!proj) {
+    teamHeadEl.textContent = 'Teams';
+    teamListEl.innerHTML = '<div class="empty">Select a project</div>';
+    return;
+  }
+  teamHeadEl.textContent = 'Teams';
+  teamListEl.innerHTML = '';
+
+  var pTeams = getProjectTeams(proj);
+  pTeams.forEach(function(t) {
+    var div = document.createElement('div');
+    div.className = 'team-item' + (t.id === selTeam ? ' active' : '');
+    div.textContent = t.name + ' (' + t.members.join(', ') + ')';
+    div.addEventListener('click', function() { selTeam = t.id; renderTeams(); renderTasks(); });
+    teamListEl.appendChild(div);
+  });
+  if (pTeams.length === 0) teamListEl.innerHTML = '<div class="empty">No teams for this project</div>';
 }
 
 function renderTasks() {
@@ -209,33 +266,115 @@ function renderTasks() {
   for (var i = 0; i < data.projects.length; i++) {
     if (data.projects[i].id === selProj) { proj = data.projects[i]; break; }
   }
-
   if (!proj) {
-    taskHeadEl.textContent = 'Tasks -- (select a project)';
+    taskHeadEl.textContent = 'Tasks';
     taskListEl.innerHTML = '<div class="empty">Select a project</div>';
     return;
   }
-
   taskHeadEl.textContent = 'Tasks -- ' + proj.name;
   taskListEl.innerHTML = '';
 
   proj.tasks.forEach(function(t) {
     var div = document.createElement('div');
-    div.className = 'task-item' + (t.id === selTask ? ' active' : '');
-    var sc = statusClass(t.status);
-    div.innerHTML = '<span class="task-name">' + esc(t.title) + '</span>'
-                 + '<span class="task-status ' + sc + '">' + t.status + '</span>';
-    div.addEventListener('click', function() {
+    div.className = 'task-item';
+    div.dataset.id = t.id;
+
+    // Find team name
+    var teamName = '';
+    var members = [];
+    if (t.team) {
+      for (var k = 0; k < data.teams.length; k++) {
+        if (data.teams[k].id === t.team) { teamName = data.teams[k].name; members = data.teams[k].members; break; }
+      }
+    }
+
+    var assignText = '';
+    if (t.person) assignText = '[' + t.person + ']';
+    else if (teamName) assignText = '[' + teamName + ']';
+
+    var expanded = (t.id === '_expanded') ? ' open' : '';
+
+    div.innerHTML =
+      '<div class="task-top">' +
+        '<span class="task-expand" data-tid="' + t.id + '">&#9660;</span>' +
+        '<span class="task-title">' + esc(t.title) + '</span>' +
+        '<span class="task-assign">' + esc(assignText) + '</span>' +
+        '<select class="task-status-select" data-tid="' + t.id + '">' +
+          statusOptions(t.status) +
+        '</select>' +
+      '</div>' +
+      '<div class="task-desc-wrap' + expanded + '" data-tid="' + t.id + '">' +
+        '<textarea class="task-desc-text" data-tid="' + t.id + '" placeholder="Description...">' + esc(t.desc || '') + '</textarea>' +
+      '</div>';
+
+    // Click to select
+    div.addEventListener('click', function(e) {
+      if (e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA' || e.target.classList.contains('task-expand')) return;
       selTask = t.id;
       document.querySelectorAll('.task-item').forEach(function(el) { el.classList.remove('active'); });
       div.classList.add('active');
     });
+
     taskListEl.appendChild(div);
   });
 
-  if (proj.tasks.length === 0) {
-    taskListEl.innerHTML = '<div class="empty">No tasks</div>';
-  }
+  // Bind expand buttons
+  document.querySelectorAll('.task-expand').forEach(function(el) {
+    el.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var tid = parseInt(this.dataset.tid);
+      var wrap = document.querySelector('.task-desc-wrap[data-tid="' + tid + '"]');
+      if (wrap) wrap.classList.toggle('open');
+    });
+  });
+
+  // Bind status dropdowns
+  document.querySelectorAll('.task-status-select').forEach(function(el) {
+    el.addEventListener('change', function(e) {
+      e.stopPropagation();
+      var tid = parseInt(this.dataset.tid);
+      for (var i = 0; i < data.projects.length; i++) {
+        if (data.projects[i].id === selProj) {
+          for (var j = 0; j < data.projects[i].tasks.length; j++) {
+            if (data.projects[i].tasks[j].id === tid) {
+              data.projects[i].tasks[j].status = this.value;
+              persist();
+              return;
+            }
+          }
+        }
+      }
+    });
+  });
+
+  // Bind description textareas
+  document.querySelectorAll('.task-desc-text').forEach(function(el) {
+    el.addEventListener('change', function(e) {
+      e.stopPropagation();
+      var tid = parseInt(this.dataset.tid);
+      for (var i = 0; i < data.projects.length; i++) {
+        if (data.projects[i].id === selProj) {
+          for (var j = 0; j < data.projects[i].tasks.length; j++) {
+            if (data.projects[i].tasks[j].id === tid) {
+              data.projects[i].tasks[j].desc = this.value;
+              persist();
+              return;
+            }
+          }
+        }
+      }
+    });
+  });
+
+  if (proj.tasks.length === 0) taskListEl.innerHTML = '<div class="empty">No tasks</div>';
+}
+
+function statusOptions(current) {
+  var opts = '';
+  STATUSES.forEach(function(s) {
+    opts += '<option value="' + s + '"' + (s === current ? ' selected' : '') + '>' + s + '</option>';
+  });
+  return opts;
 }
 
 function esc(str) {
@@ -246,29 +385,45 @@ function esc(str) {
 
 function nextId(items) {
   var max = 0;
-  for (var i = 0; i < items.length; i++) {
-    if (items[i].id > max) max = items[i].id;
-  }
+  for (var i = 0; i < items.length; i++) { if (items[i].id > max) max = items[i].id; }
   return max + 1;
 }
 
 function persist() {
   saveLocal(data);
-  setSyncStatus('Unsaved');
+  setSyncText('Unsaved');
+  setSyncColor('red');
 }
 
 // ===================================================================
-//  Actions
+//  Sync button
 // ===================================================================
+syncBtn.addEventListener('click', function() {
+  if (typeof API_TOKEN === 'undefined' || !API_TOKEN) {
+    syncStatus.textContent = 'No token';
+    return;
+  }
+  setSyncText('Syncing...');
+  setSyncColor('yellow');
+  pushToRepo(data).then(function() {
+    setSyncText('Synced');
+    setSyncColor('green');
+  }).catch(function(e) {
+    setSyncText('Error');
+    setSyncColor('red');
+  });
+});
 
+// ===================================================================
+//  Add / Delete Project
+// ===================================================================
 document.getElementById('proj-add').addEventListener('click', function() {
   var name = prompt('Project name:');
   if (name && name.trim()) {
-    data.projects.push({ id: nextId(data.projects), name: name.trim(), tasks: [] });
+    data.projects.push({ id: nextId(data.projects), name: name.trim(), teams: [], tasks: [] });
     persist();
     selProj = data.projects[data.projects.length - 1].id;
-    renderProjects();
-    renderTasks();
+    renderAll();
   }
 });
 
@@ -279,50 +434,156 @@ document.getElementById('proj-del').addEventListener('click', function() {
     if (data.projects[i].id === selProj) { found = data.projects[i]; break; }
   }
   if (!found) return;
-  if (!confirm('Delete "' + found.name + '" and all its tasks?')) return;
-
+  if (!confirm('Delete "' + found.name + '" and all its teams and tasks?')) return;
   data.projects = data.projects.filter(function(p) { return p.id !== selProj; });
   persist();
   selProj = data.projects.length > 0 ? data.projects[0].id : null;
-  renderProjects();
-  renderTasks();
+  renderAll();
 });
+
+// ===================================================================
+//  Team modal
+// ===================================================================
+var teamModalOverlay = document.getElementById('team-modal-overlay');
+var teamModalName = document.getElementById('team-modal-name');
+var teamModalMembers = document.getElementById('team-modal-members');
+
+document.getElementById('team-add').addEventListener('click', function() {
+  if (selProj === null) { alert('Select a project first.'); return; }
+  teamModalName.value = '';
+  teamModalMembers.value = '';
+  teamModalOverlay.style.display = 'flex';
+  teamModalName.focus();
+});
+
+document.getElementById('team-modal-ok').addEventListener('click', function() {
+  var name = teamModalName.value.trim();
+  if (!name) { alert('Team name required.'); return; }
+  var members = teamModalMembers.value.split(',').map(function(s) { return s.trim(); }).filter(function(s) { return s; });
+  if (members.length === 0) { alert('At least one member required.'); return; }
+
+  var newTeam = { id: nextId(data.teams), name: name, members: members };
+  data.teams.push(newTeam);
+
+  // Assign team to current project
+  for (var i = 0; i < data.projects.length; i++) {
+    if (data.projects[i].id === selProj) {
+      if (!data.projects[i].teams) data.projects[i].teams = [];
+      if (data.projects[i].teams.indexOf(newTeam.id) < 0) data.projects[i].teams.push(newTeam.id);
+      break;
+    }
+  }
+
+  persist();
+  teamModalOverlay.style.display = 'none';
+  renderAll();
+});
+
+document.getElementById('team-modal-cancel').addEventListener('click', function() {
+  teamModalOverlay.style.display = 'none';
+});
+
+document.getElementById('team-del').addEventListener('click', function() {
+  if (selTeam === null) { alert('Select a team first.'); return; }
+  if (!confirm('Delete this team?')) return;
+  // Remove team from data.teams
+  data.teams = data.teams.filter(function(t) { return t.id !== selTeam; });
+  // Remove team reference from all projects
+  for (var i = 0; i < data.projects.length; i++) {
+    if (data.projects[i].teams) {
+      data.projects[i].teams = data.projects[i].teams.filter(function(tid) { return tid !== selTeam; });
+    }
+  }
+  persist();
+  selTeam = null;
+  renderAll();
+});
+
+// ===================================================================
+//  Task modal
+// ===================================================================
+var modalOverlay = document.getElementById('modal-overlay');
+var modalTitle = document.getElementById('modal-title-input');
+var modalDesc = document.getElementById('modal-desc-input');
+var modalTeamSelect = document.getElementById('modal-team-select');
+var modalPersonSelect = document.getElementById('modal-person-select');
 
 document.getElementById('task-add').addEventListener('click', function() {
   if (selProj === null) { alert('Select a project first.'); return; }
-  var title = prompt('Task description:');
-  if (title && title.trim()) {
-    for (var i = 0; i < data.projects.length; i++) {
-      if (data.projects[i].id === selProj) {
-        data.projects[i].tasks.push({
-          id: nextId(data.projects[i].tasks),
-          title: title.trim(),
-          status: 'Pending'
+  modalTitle.value = '';
+  modalDesc.value = '';
+
+  // Populate team dropdown with teams available to this project
+  modalTeamSelect.innerHTML = '<option value="0">-- None --</option>';
+  var proj = null;
+  for (var i = 0; i < data.projects.length; i++) {
+    if (data.projects[i].id === selProj) { proj = data.projects[i]; break; }
+  }
+  if (proj && proj.teams) {
+    for (var i = 0; i < proj.teams.length; i++) {
+      for (var j = 0; j < data.teams.length; j++) {
+        if (data.teams[j].id === proj.teams[i]) {
+          var opt = document.createElement('option');
+          opt.value = data.teams[j].id;
+          opt.textContent = data.teams[j].name;
+          modalTeamSelect.appendChild(opt);
+        }
+      }
+    }
+  }
+  updatePersonSelect();
+  modalOverlay.style.display = 'flex';
+  modalTitle.focus();
+});
+
+modalTeamSelect.addEventListener('change', updatePersonSelect);
+
+function updatePersonSelect() {
+  var teamId = parseInt(modalTeamSelect.value);
+  modalPersonSelect.innerHTML = '<option value="">-- None --</option>';
+  if (teamId) {
+    for (var i = 0; i < data.teams.length; i++) {
+      if (data.teams[i].id === teamId) {
+        data.teams[i].members.forEach(function(m) {
+          var opt = document.createElement('option');
+          opt.value = m;
+          opt.textContent = m;
+          modalPersonSelect.appendChild(opt);
         });
         break;
       }
     }
-    persist();
-    renderTasks();
   }
+}
+
+document.getElementById('modal-ok').addEventListener('click', function() {
+  var title = modalTitle.value.trim();
+  if (!title) { alert('Task title required.'); return; }
+
+  var proj = null;
+  for (var i = 0; i < data.projects.length; i++) {
+    if (data.projects[i].id === selProj) { proj = data.projects[i]; break; }
+  }
+  if (!proj) return;
+
+  var teamId = parseInt(modalTeamSelect.value) || 0;
+  var person = modalPersonSelect.value || '';
+
+  proj.tasks.push({
+    id: nextId(proj.tasks),
+    title: title,
+    desc: modalDesc.value,
+    status: 'Pending',
+    team: teamId,
+    person: person
+  });
+  persist();
+  modalOverlay.style.display = 'none';
+  renderTasks();
 });
 
-document.getElementById('task-toggle').addEventListener('click', function() {
-  if (selProj === null || selTask === null) { alert('Select a task first.'); return; }
-  var cycle = { 'Pending': 'In Progress', 'In Progress': 'Done', 'Done': 'Pending' };
-  for (var i = 0; i < data.projects.length; i++) {
-    if (data.projects[i].id === selProj) {
-      for (var j = 0; j < data.projects[i].tasks.length; j++) {
-        if (data.projects[i].tasks[j].id === selTask) {
-          data.projects[i].tasks[j].status = cycle[data.projects[i].tasks[j].status] || 'Pending';
-          break;
-        }
-      }
-      break;
-    }
-  }
-  persist();
-  renderTasks();
+document.getElementById('modal-cancel').addEventListener('click', function() {
+  modalOverlay.style.display = 'none';
 });
 
 document.getElementById('task-del').addEventListener('click', function() {
@@ -340,32 +601,10 @@ document.getElementById('task-del').addEventListener('click', function() {
 });
 
 // ===================================================================
-//  Sync button
+//  Init
 // ===================================================================
-
-syncBtnEl.addEventListener('click', function() {
-  if (API_TOKEN === '__SYNC_TOKEN__') {
-    setSyncStatus('No token', true);
-    return;
-  }
-  setSyncStatus('Syncing...');
-  pushToRepo(data).then(function() {
-    setSyncStatus('Saved');
-  }).catch(function(e) {
-    setSyncStatus('Error: ' + e.message, true);
-  });
-});
-
-// ===================================================================
-//  Init render
-// ===================================================================
-
-renderProjects();
-if (data.projects.length > 0) {
-  selProj = data.projects[0].id;
-  renderProjects();
-  renderTasks();
-}
+function renderAllTasks() { renderProjects(); renderTeams(); renderTasks(); }
+initData();
 </script>
 </body>
 </html>
