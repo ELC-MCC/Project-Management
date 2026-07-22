@@ -23,92 +23,105 @@
         "Connor",
         "Cole"
       ]
+    },
+    {
+      "id": 4,
+      "name": "CAD Team",
+      "members": [
+        "Jacob",
+        "Connor"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Build Team",
+      "members": [
+        "Karma",
+        "Emma",
+        "Noah"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Coding Team",
+      "members": [
+        "Jacob2",
+        "Marc",
+        "Vitaliy"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Cosmetic Team",
+      "members": [
+        "Noah",
+        "Emma"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Electrical Team",
+      "members": [
+        "Connor",
+        "Jacob",
+        "Marc"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "CAD Team",
+      "members": [
+        "Connor",
+        "Jacob",
+        "Vitaliy"
+      ]
     }
   ],
   "projects": [
     {
       "id": 1,
-      "name": "Website Redesign",
+      "name": "Nano-Baja Team",
       "teams": [
-        1
+        4,
+        5,
+        6,
+        7,
+        8
       ],
       "tasks": [
         {
           "id": 1,
-          "title": "Wireframe homepage",
+          "title": "Design Chassis",
           "desc": "",
-          "status": "Done",
-          "team": 1,
-          "persons": [
-            "Alice"
-          ]
+          "status": "Pending",
+          "team": 4,
+          "persons": []
         },
         {
           "id": 2,
-          "title": "Design color palette",
-          "desc": "Pick primary and accent colors",
-          "status": "In Progress",
-          "team": 1,
-          "persons": [
-            "Bob"
-          ]
-        },
-        {
-          "id": 3,
-          "title": "Build components",
+          "title": "Create Wiring Harness",
           "desc": "",
           "status": "Pending",
-          "team": 0,
-          "persons": []
+          "team": 8,
+          "persons": [
+            "Vitaliy"
+          ]
         }
       ]
     },
     {
       "id": 2,
-      "name": "Mobile App v2",
+      "name": "R2-ELC",
       "teams": [
-        2
+        9
       ],
-      "tasks": [
-        {
-          "id": 1,
-          "title": "Set up CI/CD",
-          "desc": "",
-          "status": "Done",
-          "team": 2,
-          "persons": [
-            "Charlie"
-          ],
-          "archived": true
-        },
-        {
-          "id": 2,
-          "title": "Implement dark mode",
-          "desc": "",
-          "status": "In Progress",
-          "team": 2,
-          "persons": [
-            "Diana"
-          ]
-        }
-      ]
+      "tasks": []
     },
     {
       "id": 3,
-      "name": "Test Project",
-      "teams": [
-        3
-      ],
-      "tasks": [
-        {
-          "id": 1,
-          "title": "TASK 1",
-          "desc": "DO IT",
-          "status": "In Progress",
-          "team": 3,
-          "persons": []
-        }
-      ]
+      "name": "Pumpkin Launcher",
+      "teams": [],
+      "tasks": []
     }
   ]
 }
