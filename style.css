@@ -203,14 +203,19 @@ button:hover {
   padding: 4px 10px;
 }
 
-.panel-foot .lock-link {
+.sync-btn {
   margin-left: auto;
   font-size: 11px;
   padding: 4px 10px;
-  border-color: #CC9700;
 }
 
-.panel-foot .lock-link:hover {
+.sync-btn:hover {
   background: #CC9700;
   color: #000000;
+}
+
+.sync-status {
+  font-size: 10px;
+  white-space: nowrap;
+  padding: 4px 4px;
 }

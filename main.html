@@ -28,6 +28,8 @@
       <button id="task-add">+ Add</button>
       <button id="task-toggle">Toggle Status</button>
       <button id="task-del">Delete</button>
+      <button id="sync-btn" class="sync-btn">Sync</button>
+      <span id="sync-status" class="sync-status">Idle</span>
     </div>
   </div>
 
@@ -35,7 +37,62 @@
 
 <script>
 // ===================================================================
-//  Seed data (embedded, gets encrypted by StatiCrypt)
+//  Config -- __SYNC_TOKEN__ gets replaced by CI pipeline
+// ===================================================================
+
+var API_TOKEN = '__SYNC_TOKEN__';
+var REPO_OWNER = 'ELC-MCC';
+var REPO_NAME = 'Project-Management';
+var DATA_PATH = 'data.json';
+var BRANCH = 'main';
+
+// ===================================================================
+//  Sync helpers
+// ===================================================================
+
+var syncStatusEl = document.getElementById('sync-status');
+var syncBtnEl = document.getElementById('sync-btn');
+
+function setSyncStatus(text, isError) {
+  syncStatusEl.textContent = text;
+  syncStatusEl.style.color = isError ? '#FF0000' : '#CC9700';
+}
+
+async function fetchFromRepo() {
+  var url = 'https://raw.githubusercontent.com/' + REPO_OWNER + '/' + REPO_NAME + '/' + BRANCH + '/' + DATA_PATH;
+  var res = await fetch(url + '?t=' + Date.now());
+  if (!res.ok) throw new Error('Fetch failed: ' + res.status);
+  return await res.json();
+}
+
+async function pushToRepo(data) {
+  // Get current file SHA first
+  var getUrl = 'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/' + DATA_PATH;
+  var getRes = await fetch(getUrl, {
+    headers: { 'Authorization': 'Bearer ' + API_TOKEN }
+  });
+  if (!getRes.ok) throw new Error('Failed to get file info: ' + getRes.status);
+  var meta = await getRes.json();
+
+  // Push new content
+  var content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+  var putRes = await fetch(getUrl, {
+    method: 'PUT',
+    headers: {
+      'Authorization': 'Bearer ' + API_TOKEN,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      message: 'sync data',
+      content: content,
+      sha: meta.sha
+    })
+  });
+  if (!putRes.ok) throw new Error('Push failed: ' + putRes.status);
+}
+
+// ===================================================================
+//  Seed data
 // ===================================================================
 
 var SEED_DATA = {
@@ -58,37 +115,54 @@ var SEED_DATA = {
 };
 
 // ===================================================================
-//  Data layer -- plain localStorage (page is encrypted by StatiCrypt)
+//  Data layer
 // ===================================================================
 
-function loadData() {
+function loadLocal() {
   var raw = localStorage.getItem('elc_data');
   if (!raw) return null;
   try { return JSON.parse(raw); } catch(e) { return null; }
 }
 
-function saveData(data) {
+function saveLocal(data) {
   localStorage.setItem('elc_data', JSON.stringify(data));
 }
 
-function seedData() {
-  saveData(SEED_DATA);
-  return SEED_DATA;
-}
-
 function getData() {
-  var d = loadData();
-  if (!d) { d = seedData(); }
+  var d = loadLocal();
+  if (!d) { saveLocal(SEED_DATA); return SEED_DATA; }
   return d;
 }
-
-// ===================================================================
-//  State
-// ===================================================================
 
 var data = getData();
 var selProj = null;
 var selTask = null;
+
+// ===================================================================
+//  Init: try to fetch shared data from repo
+// ===================================================================
+
+if (API_TOKEN !== '__SYNC_TOKEN__') {
+  setSyncStatus('Loading...');
+  fetchFromRepo().then(function(remote) {
+    data = remote;
+    saveLocal(data);
+    renderProjects();
+    if (data.projects.length > 0) {
+      selProj = data.projects[0].id;
+      renderProjects();
+      renderTasks();
+    }
+    setSyncStatus('Synced');
+  }).catch(function() {
+    // Fall back to local data
+    setSyncStatus('Offline');
+  });
+}
+
+// ===================================================================
+//  DOM refs
+// ===================================================================
 
 var projListEl = document.getElementById('proj-list');
 var taskListEl = document.getElementById('task-list');
@@ -176,7 +250,8 @@ function nextId(items) {
 }
 
 function persist() {
-  saveData(data);
+  saveLocal(data);
+  setSyncStatus('Unsaved');
 }
 
 // ===================================================================
@@ -262,7 +337,24 @@ document.getElementById('task-del').addEventListener('click', function() {
 });
 
 // ===================================================================
-//  Init
+//  Sync button
+// ===================================================================
+
+syncBtnEl.addEventListener('click', function() {
+  if (API_TOKEN === '__SYNC_TOKEN__') {
+    setSyncStatus('No token', true);
+    return;
+  }
+  setSyncStatus('Syncing...');
+  pushToRepo(data).then(function() {
+    setSyncStatus('Saved');
+  }).catch(function(e) {
+    setSyncStatus('Error: ' + e.message, true);
+  });
+});
+
+// ===================================================================
+//  Init render
 // ===================================================================
 
 renderProjects();
