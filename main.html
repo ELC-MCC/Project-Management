@@ -12,12 +12,14 @@
 <div id="login-overlay" class="login-overlay">
   <div class="login-box">
     <h1>ELC Project Management</h1>
-    <p>Select role and enter password</p>
+    <p>Select your role to continue</p>
     <select id="login-role">
-      <option value="officer">Officer</option>
       <option value="member">Member</option>
+      <option value="officer">Officer</option>
     </select>
-    <input type="password" id="login-pw" placeholder="Password">
+    <div id="login-pw-wrap">
+      <input type="password" id="login-pw" placeholder="Officer password">
+    </div>
     <div class="err" id="login-err"></div>
     <button id="login-btn">Enter</button>
   </div>
@@ -211,34 +213,46 @@ var userRole = null;
 // ===================================================================
 //  Role login
 // ===================================================================
+var loginRole = document.getElementById('login-role');
+var loginPw = document.getElementById('login-pw');
+var loginPwWrap = document.getElementById('login-pw-wrap');
+var loginErr = document.getElementById('login-err');
+
+// Show/hide password field based on role
+loginRole.addEventListener('change', function() {
+  loginPwWrap.style.display = (this.value === 'officer') ? 'block' : 'none';
+  loginErr.textContent = '';
+});
+loginPwWrap.style.display = 'none'; // Member selected by default
+
 document.getElementById('login-btn').addEventListener('click', function() {
-  var role = document.getElementById('login-role').value;
-  var pw = document.getElementById('login-pw').value;
-  var errEl = document.getElementById('login-err');
+  var role = loginRole.value;
+
+  if (role === 'member') {
+    userRole = 'member';
+    document.getElementById('login-overlay').classList.add('hidden');
+    document.body.classList.add('member-mode');
+    document.getElementById('login-pw').value = '';
+    renderAll();
+    return;
+  }
 
   if (role === 'officer') {
+    var pw = loginPw.value;
     if (typeof OFFICER_PASSWORD !== 'undefined' && pw === OFFICER_PASSWORD) {
       userRole = 'officer';
       document.getElementById('login-overlay').classList.add('hidden');
       document.body.classList.remove('member-mode');
+      document.getElementById('login-pw').value = '';
       renderAll();
     } else {
-      errEl.textContent = 'Incorrect password';
-    }
-  } else if (role === 'member') {
-    if (pw === 'ELC2026') {
-      userRole = 'member';
-      document.getElementById('login-overlay').classList.add('hidden');
-      document.body.classList.add('member-mode');
-      renderAll();
-    } else {
-      errEl.textContent = 'Incorrect password';
+      loginErr.textContent = 'Incorrect password';
+      loginPw.value = '';
     }
   }
-  document.getElementById('login-pw').value = '';
 });
 
-document.getElementById('login-pw').addEventListener('keydown', function(e) {
+loginPw.addEventListener('keydown', function(e) {
   if (e.key === 'Enter') document.getElementById('login-btn').click();
 });
 

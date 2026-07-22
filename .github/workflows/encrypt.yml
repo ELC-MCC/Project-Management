@@ -18,10 +18,10 @@ jobs:
       - name: Create token file
         env:
           SYNC_TOKEN: ${{ secrets.SYNC_TOKEN }}
-          OFFICER_PW: ${{ secrets.DECRYPTION_PASSPHRASE }}
+          OFFICER_PW: ${{ secrets.OFFICER_PASSWORD }}
         run: |
           echo "var API_TOKEN='***';" > token.js
-          echo "var OFFICER_PASSWORD='${OFFICER_PW}';" >> token.js
+          echo "var OFFICER_PASSWORD='***';" >> token.js
       - name: Install staticrypt
         run: npm install -g staticrypt@3.*
       - name: Remove template salt (if necessary)

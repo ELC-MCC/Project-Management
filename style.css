@@ -29,6 +29,8 @@ button { cursor: pointer; }
   font-family: "Courier New", Courier, monospace;
 }
 .login-box .err { font-size: 11px; min-height: 16px; margin-bottom: 8px; color: #FF0000; }
+.login-box #login-pw-wrap { margin-bottom: 8px; }
+.login-box #login-pw-wrap input { width: 100%; text-align: center; margin-bottom: 0; }
 .login-box button {
   width: 100%; font-weight: bold; padding: 8px;
   background: #CC9700; color: #000000; border: 2px solid #CC9700;
@@ -75,8 +77,6 @@ button { cursor: pointer; }
 
 /* ============== MEMBER MODE ============== */
 .member-mode .panel-foot { display: none !important; }
-.member-mode .topbar { display: none !important; }
-.member-mode .main { height: 100%; }
 
 /* ============== ITEMS ============== */
 .proj-item, .team-item, .task-item { padding: 8px 10px; cursor: pointer; border-bottom: 1px solid #333333; font-size: 12px; border-left: 3px solid transparent; }
