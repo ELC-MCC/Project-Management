@@ -9,9 +9,9 @@
       "name": "Website Redesign",
       "teams": [1],
       "tasks": [
-        { "id": 1, "title": "Wireframe homepage", "desc": "", "status": "Done", "team": 1, "person": "Alice" },
-        { "id": 2, "title": "Design color palette", "desc": "Pick primary and accent colors", "status": "In Progress", "team": 1, "person": "Bob" },
-        { "id": 3, "title": "Build components", "desc": "", "status": "Pending", "team": 0, "person": "" }
+        { "id": 1, "title": "Wireframe homepage", "desc": "", "status": "Done", "team": 1, "persons": ["Alice"] },
+        { "id": 2, "title": "Design color palette", "desc": "Pick primary and accent colors", "status": "In Progress", "team": 1, "persons": ["Bob"] },
+        { "id": 3, "title": "Build components", "desc": "", "status": "Pending", "team": 0, "persons": [] }
       ]
     },
     {
@@ -19,8 +19,8 @@
       "name": "Mobile App v2",
       "teams": [2],
       "tasks": [
-        { "id": 1, "title": "Set up CI/CD", "desc": "", "status": "Done", "team": 2, "person": "Charlie" },
-        { "id": 2, "title": "Implement dark mode", "desc": "", "status": "In Progress", "team": 2, "person": "Diana" }
+        { "id": 1, "title": "Set up CI/CD", "desc": "", "status": "Done", "team": 2, "persons": ["Charlie"] },
+        { "id": 2, "title": "Implement dark mode", "desc": "", "status": "In Progress", "team": 2, "persons": ["Diana"] }
       ]
     }
   ]

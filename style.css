@@ -1,97 +1,20 @@
-/* ELC Project Management -- Full layout
-   Black (#000000) and MCC Gold (#CC9700) with colored buttons */
-
+/* ELC Project Management */
 * { margin: 0; padding: 0; box-sizing: border-box; }
-
-html, body {
-  height: 100%;
-  background: #000000;
-  color: #CC9700;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 14px;
-}
-
-input, button, select, textarea {
-  font-family: inherit;
-  font-size: inherit;
-  background: #000000;
-  color: #CC9700;
-  border: 2px solid #CC9700;
-  padding: 6px 10px;
-}
-
+html, body { height: 100%; background: #000000; color: #CC9700; font-family: "Courier New", Courier, monospace; font-size: 14px; }
+input, button, select, textarea { font-family: inherit; font-size: inherit; background: #000000; color: #CC9700; border: 2px solid #CC9700; padding: 6px 10px; }
 input:focus, button:focus, select:focus { outline: none; }
-
 button { cursor: pointer; }
 
-/* ============== TOP BAR ============== */
-
+/* ============== TOP BAR (sync only) ============== */
 .topbar {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  height: 44px;
-  padding: 0 8px;
-  border-bottom: 2px solid #CC9700;
-  background: #000000;
-  flex-wrap: nowrap;
-  overflow-x: auto;
+  display: flex; align-items: center; justify-content: flex-end; gap: 6px;
+  height: 36px; padding: 0 8px;
+  border-bottom: 2px solid #CC9700; background: #000000;
 }
-
-.topbar-left {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-left: auto;
-}
-
-.topbar .btn {
-  font-size: 13px;
-  font-weight: bold;
-  padding: 6px 14px;
-  border: 2px solid;
-  cursor: pointer;
-  white-space: nowrap;
-  height: 32px;
-}
-
-.topbar .btn-add { background: #CC9700; color: #000000; border-color: #CC9700; }
-.topbar .btn-add:hover { background: #000000; color: #CC9700; }
-
-.topbar .btn-del { background: #CC0000; color: #FFFFFF; border-color: #CC0000; }
-.topbar .btn-del:hover { background: #000000; color: #CC0000; }
-
-.topbar .btn-edit { background: #6666FF; color: #FFFFFF; border-color: #6666FF; }
-.topbar .btn-edit:hover { background: #000000; color: #6666FF; }
-
-.topbar .sep { width: 0; height: 24px; border-left: 2px solid #555555; margin: 0 4px; }
-
-.sync-group {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.sync-status-text {
-  font-size: 12px;
-  font-weight: bold;
-  white-space: nowrap;
-}
-
+.sync-group { display: flex; align-items: center; gap: 6px; }
+.sync-status-text { font-size: 12px; font-weight: bold; white-space: nowrap; }
 .sync-btn {
-  font-size: 13px;
-  font-weight: bold;
-  padding: 6px 16px;
-  border: 2px solid;
-  cursor: pointer;
-  white-space: nowrap;
-  height: 32px;
+  font-size: 12px; font-weight: bold; padding: 4px 14px; border: 2px solid; cursor: pointer; white-space: nowrap; height: 28px;
 }
 .sync-btn.green { background: #00CC00; color: #000000; border-color: #00CC00; }
 .sync-btn.green:hover { background: #000000; color: #00CC00; }
@@ -101,218 +24,68 @@ button { cursor: pointer; }
 .sync-btn.yellow:hover { background: #000000; color: #CC9700; }
 
 /* ============== LAYOUT ============== */
-
-.main {
-  display: flex;
-  height: calc(100% - 44px);
-}
-
-.panel {
-  display: flex;
-  flex-direction: column;
-  border-right: 2px solid #CC9700;
-}
-
+.main { display: flex; height: calc(100% - 36px); }
+.panel { display: flex; flex-direction: column; border-right: 2px solid #CC9700; }
 .panel:last-child { border-right: none; }
-
-.panel-left { width: 200px; min-width: 140px; flex-shrink: 0; }
-.panel-mid { width: 200px; min-width: 140px; flex-shrink: 0; }
+.panel-left { width: 220px; min-width: 160px; flex-shrink: 0; }
+.panel-mid { width: 220px; min-width: 160px; flex-shrink: 0; }
 .panel-right { flex: 1; }
 
-.panel-head {
-  padding: 8px 10px;
-  border-bottom: 2px solid #CC9700;
-  font-size: 13px;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.panel-body {
-  flex: 1;
-  overflow-y: auto;
-}
-
-.panel-foot {
-  display: flex;
-  gap: 4px;
-  padding: 5px 6px;
-  border-top: 2px solid #CC9700;
-  flex-wrap: wrap;
-}
+.panel-head { padding: 8px 10px; border-bottom: 2px solid #CC9700; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+.panel-body { flex: 1; overflow-y: auto; }
+.panel-foot { display: flex; gap: 4px; padding: 5px 6px; border-top: 2px solid #CC9700; flex-wrap: wrap; }
+.panel-foot .btn { font-size: 12px; font-weight: bold; padding: 5px 10px; border: 2px solid; cursor: pointer; white-space: nowrap; }
+.panel-foot .btn-add { background: #CC9700; color: #000000; border-color: #CC9700; }
+.panel-foot .btn-add:hover { background: #000000; color: #CC9700; }
+.panel-foot .btn-del { background: #CC0000; color: #FFFFFF; border-color: #CC0000; }
+.panel-foot .btn-del:hover { background: #000000; color: #CC0000; }
+.panel-foot .btn-edit { background: #6666FF; color: #FFFFFF; border-color: #6666FF; }
+.panel-foot .btn-edit:hover { background: #000000; color: #6666FF; }
 
 /* ============== ITEMS ============== */
+.proj-item, .team-item, .task-item { padding: 8px 10px; cursor: pointer; border-bottom: 1px solid #333333; font-size: 12px; border-left: 3px solid transparent; }
+.proj-item:hover, .team-item:hover, .task-item:hover { background: #111111; }
+.proj-item.active, .team-item.active, .task-item.active { border-left-color: #CC9700; background: #0a0a0a; }
 
-.proj-item,
-.team-item,
-.task-item {
-  padding: 7px 10px;
-  cursor: pointer;
-  border-bottom: 1px solid #555555;
-  font-size: 12px;
-}
-
-.proj-item:hover,
-.team-item:hover,
-.task-item:hover { background: #111111; }
-
-.proj-item.active,
-.team-item.active,
-.task-item.active { background: #CC9700; color: #000000; }
-
-/* Task layout */
+/* ============== TASK LAYOUT ============== */
 .task-item { padding: 6px 10px; }
-.task-top {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
+.task-top { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.task-title { flex: 1; min-width: 80px; }
+.task-tags { display: flex; gap: 2px; flex-wrap: wrap; }
 
-.task-expand {
-  font-size: 10px;
-  cursor: pointer;
-  background: none;
-  border: 1px solid #555555;
-  color: #CC9700;
-  padding: 0 4px;
-  flex-shrink: 0;
-}
-
-.task-title { flex: 1; }
-
-.task-assign {
-  font-size: 10px;
-  color: #888888;
-  margin-right: 4px;
-}
+.pastel-tag { display: inline-block; font-size: 10px; font-weight: bold; padding: 2px 8px; margin: 1px; border: none; }
 
 .task-status-select {
-  font-size: 10px;
-  padding: 2px 6px;
-  border: none;
-  background: #000000;
-  color: #CC9700;
-  cursor: pointer;
-  flex-shrink: 0;
-  font-weight: bold;
+  font-size: 10px; padding: 2px 6px; border: none; background: #000000; color: #CC9700;
+  cursor: pointer; flex-shrink: 0; font-weight: bold;
 }
-
 .task-status-select.ps-pending { background: #CCAA00; color: #000000; }
 .task-status-select.ps-progress { background: #2255CC; color: #FFFFFF; }
 .task-status-select.ps-review { background: #7733AA; color: #FFFFFF; }
 .task-status-select.ps-done { background: #008800; color: #FFFFFF; }
 .task-status-select.ps-hold { background: #CC6600; color: #000000; }
 
-.task-desc-wrap {
-  display: none;
-  margin-top: 4px;
-  padding-left: 20px;
-}
+.task-desc-wrap { display: none; margin-top: 4px; padding-left: 4px; }
 .task-desc-wrap.open { display: block; }
-
 .task-desc-text {
-  font-size: 11px;
-  color: #AAAAAA;
-  border: 1px solid #555555;
-  background: #0a0a0a;
-  padding: 4px 6px;
-  width: 100%;
-  min-height: 32px;
-  resize: vertical;
+  font-size: 11px; color: #AAAAAA; border: 1px solid #555555; background: #0a0a0a;
+  padding: 4px 6px; width: 100%; min-height: 28px; resize: vertical;
 }
 
-/* ============== TEAM MEMBER LIST ============== */
+/* ============== TEAM MEMBER CARDS ============== */
+.team-members { padding: 2px 8px 6px 8px; border-bottom: 1px solid #333333; display: flex; flex-wrap: wrap; gap: 3px; }
+.team-members .pastel-tag { font-size: 10px; }
 
-.team-members {
-  font-size: 10px;
-  color: #888888;
-  padding: 4px 10px 6px;
-  border-bottom: 1px solid #555555;
-}
-
-.team-members span {
-  display: inline-block;
-  margin-right: 4px;
-}
-
-/* ============== EMPTY STATE ============== */
-
-.empty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  font-size: 12px;
-  color: #555555;
-}
+/* ============== EMPTY ============== */
+.empty { display: flex; align-items: center; justify-content: center; height: 100%; font-size: 12px; color: #555555; }
 
 /* ============== MODAL ============== */
-
-.modal-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-}
-
-.modal-box {
-  background: #111111;
-  border: 2px solid #CC9700;
-  padding: 20px 24px;
-  width: 360px;
-  max-height: 80vh;
-  overflow-y: auto;
-}
-
-.modal-box h2 {
-  font-size: 14px;
-  font-weight: bold;
-  margin-bottom: 12px;
-  text-transform: uppercase;
-}
-
-.modal-box label {
-  display: block;
-  font-size: 11px;
-  margin-bottom: 4px;
-  margin-top: 10px;
-}
-
-.modal-box input,
-.modal-box select,
-.modal-box textarea {
-  width: 100%;
-  font-size: 12px;
-}
-
-.modal-box .modal-btns {
-  display: flex;
-  gap: 8px;
-  margin-top: 14px;
-}
-
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 100; }
+.modal-box { background: #111111; border: 2px solid #CC9700; padding: 20px 24px; width: 380px; max-height: 80vh; overflow-y: auto; }
+.modal-box h2 { font-size: 14px; font-weight: bold; margin-bottom: 12px; text-transform: uppercase; }
+.modal-box label { display: block; font-size: 11px; margin-bottom: 4px; margin-top: 10px; }
+.modal-box input, .modal-box select, .modal-box textarea { width: 100%; font-size: 12px; }
+.modal-box .modal-btns { display: flex; gap: 8px; margin-top: 14px; }
 .modal-box .modal-btns button { flex: 1; font-size: 12px; font-weight: bold; padding: 6px; }
 .mbtn-ok { background: #CC9700; color: #000000; border-color: #CC9700; }
 .mbtn-cancel { background: #333333; color: #CC9700; border-color: #555555; }
-
-/* Team tags in task detail */
-.team-tag {
-  display: inline-block;
-  font-size: 10px;
-  padding: 1px 6px;
-  border: 1px solid #888888;
-  color: #888888;
-  margin: 2px;
-}
-
-.pastel-tag {
-  display: inline-block;
-  font-size: 10px;
-  font-weight: bold;
-  padding: 2px 8px;
-  margin: 1px;
-  border: none;
-}
