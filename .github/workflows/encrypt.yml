@@ -21,7 +21,7 @@ jobs:
           OFFICER_PW: ${{ secrets.OFFICER_PASSWORD }}
         run: |
           echo "var API_TOKEN='***';" > token.js
-          echo "var OFFICER_PASSWORD='***';" >> token.js
+          echo "var OFFICER_PASSWORD='${OFFICER_PW}';" >> token.js
       - name: Install staticrypt
         run: npm install -g staticrypt@3.*
       - name: Remove template salt (if necessary)
