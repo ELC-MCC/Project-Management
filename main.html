@@ -29,6 +29,7 @@
   <div class="sync-group">
     <span class="sync-status-text" id="sync-status-text">Idle</span>
     <button id="sync-btn" class="sync-btn green">Sync</button>
+    <button id="logout-btn" class="sync-btn" style="background:#333333;color:#CC9700;border-color:#555555">Logout</button>
   </div>
 </header>
 
@@ -651,6 +652,16 @@ document.getElementById('task-toggle-archive').addEventListener('click', functio
   this.textContent = showArchived ? 'Show Current' : 'Show Finished';
   selTask = null;
   renderTasks();
+});
+
+document.getElementById('logout-btn').addEventListener('click', function() {
+  userRole = null;
+  document.getElementById('login-overlay').classList.remove('hidden');
+  document.body.classList.remove('member-mode');
+  document.getElementById('login-pw').value = '';
+  document.getElementById('login-err').textContent = '';
+  document.getElementById('login-pw-wrap').style.display = 'none';
+  document.getElementById('login-role').value = 'member';
 });
 
 // ===================================================================
