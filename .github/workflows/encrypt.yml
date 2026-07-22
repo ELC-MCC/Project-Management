@@ -18,7 +18,7 @@ jobs:
           apt-get clean && apt-get update -y
           apt-get install -y git
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install staticrypt
         run: npm install -g staticrypt@3.*
       - name: Remove template salt (if necessary)
@@ -54,7 +54,7 @@ jobs:
           git add .
           git commit -m "encrypted files"
       - name: Push changes
-        uses: ad-m/github-push-action@master
+        uses: ad-m/github-push-action@v0.8.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: main
