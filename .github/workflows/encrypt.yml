@@ -44,8 +44,8 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
           git checkout --orphan gh-pages
-          git rm -rf .
-          mv /tmp/index.html index.html
+          find . -not -path './.git/*' -not -name '.git' -delete
+          mv /tmp/index.html .
           git add index.html
           git commit -m "encrypted page"
-          git push origin gh-pages --force
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git gh-pages --force
