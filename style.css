@@ -125,3 +125,17 @@ button { cursor: pointer; }
 .modal-box .modal-btns button { flex: 1; font-size: 12px; font-weight: bold; padding: 6px; }
 .mbtn-ok { background: #CC9700; color: #000000; border-color: #CC9700; }
 .mbtn-cancel { background: #333333; color: #CC9700; border-color: #555555; }
+.mbtn-small { background: #555555; color: #CC9700; border: 1px solid #777777; padding: 2px 8px; font-size: 11px; cursor: pointer; }
+.mbtn-small:hover { background: #CC9700; color: #000000; }
+
+.member-area { margin-top: 8px; }
+.member-area-label { font-size: 11px; color: #888888; margin-bottom: 4px; }
+.member-tag { display: inline-flex; align-items: center; gap: 4px; margin: 2px; }
+.member-tag .remove { cursor: pointer; font-size: 12px; font-weight: bold; padding: 0 2px; }
+.member-tag .remove:hover { color: #FF0000; }
+.avail-grid { display: flex; flex-wrap: wrap; gap: 3px; margin: 4px 0; }
+.avail-grid button { font-size: 11px; padding: 2px 10px; border: 1px solid #777777; background: #222222; color: #CC9700; cursor: pointer; }
+.avail-grid button:hover { background: #CC9700; color: #000000; }
+.add-row { display: flex; gap: 4px; margin-top: 4px; }
+.add-row input { flex: 1; font-size: 12px; }
+.add-row button { font-size: 11px; padding: 4px 10px; }

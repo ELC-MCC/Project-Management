@@ -94,8 +94,21 @@
     <h2>New Team</h2>
     <label for="team-modal-name">Team Name</label>
     <input id="team-modal-name" type="text">
-    <label for="team-modal-members">Members (comma separated)</label>
-    <input id="team-modal-members" type="text" placeholder="Alice, Bob, Charlie">
+    <div class="member-area">
+      <div class="member-area-label">Team Members:</div>
+      <div id="team-modal-members-list"></div>
+    </div>
+    <div class="member-area">
+      <div class="member-area-label">Add from project:</div>
+      <div id="team-modal-avail" class="avail-grid"></div>
+    </div>
+    <div class="member-area">
+      <div class="member-area-label">Add new:</div>
+      <div class="add-row">
+        <input id="team-modal-new-member" type="text" placeholder="Name">
+        <button id="team-modal-add-member" class="mbtn-small">+ Add</button>
+      </div>
+    </div>
     <div class="modal-btns">
       <button id="team-modal-ok" class="mbtn-ok">OK</button>
       <button id="team-modal-cancel" class="mbtn-cancel">Cancel</button>
@@ -109,8 +122,21 @@
     <h2>Edit Team</h2>
     <label for="team-edit-name">Team Name</label>
     <input id="team-edit-name" type="text">
-    <label for="team-edit-members">Members (comma separated)</label>
-    <input id="team-edit-members" type="text" placeholder="Alice, Bob, Charlie">
+    <div class="member-area">
+      <div class="member-area-label">Team Members:</div>
+      <div id="team-edit-members-list"></div>
+    </div>
+    <div class="member-area">
+      <div class="member-area-label">Add from project:</div>
+      <div id="team-edit-avail" class="avail-grid"></div>
+    </div>
+    <div class="member-area">
+      <div class="member-area-label">Add new:</div>
+      <div class="add-row">
+        <input id="team-edit-new-member" type="text" placeholder="Name">
+        <button id="team-edit-add-member" class="mbtn-small">+ Add</button>
+      </div>
+    </div>
     <div class="modal-btns">
       <button id="team-edit-ok" class="mbtn-ok">Save</button>
       <button id="team-edit-cancel" class="mbtn-cancel">Cancel</button>
@@ -466,6 +492,86 @@ function esc(str) { var d = document.createElement('div'); d.textContent = str; 
 function nextId(items) { var max = 0; for (var i = 0; i < items.length; i++) { if (items[i].id > max) max = items[i].id; } return max + 1; }
 function persist() { saveLocal(data); setSyncText('Unsaved'); setSyncColor('red'); }
 
+// Get all unique person names from a project's teams and tasks
+function getProjectPeople(projId) {
+  var names = {};
+  // Get names from tasks
+  for (var i = 0; i < data.projects.length; i++) {
+    if (data.projects[i].id === projId) {
+      data.projects[i].tasks.forEach(function(t) {
+        if (t.persons) t.persons.forEach(function(p) { names[p] = true; });
+      });
+      // Get names from teams assigned to this project
+      if (data.projects[i].teams) {
+        data.projects[i].teams.forEach(function(tid) {
+          for (var j = 0; j < data.teams.length; j++) {
+            if (data.teams[j].id === tid) {
+              data.teams[j].members.forEach(function(m) { names[m] = true; });
+            }
+          }
+        });
+      }
+      break;
+    }
+  }
+  return Object.keys(names).sort();
+}
+
+// Render a member picker inside a modal
+// containerId: element id to render into
+// members: current array of member names
+// availPeople: array of available names to suggest
+// onChange: called when members change
+var _memberPickers = {};
+function renderMemberPicker(modalKey, containerId, availInputId, addBtnId, members, availPeople, onChange) {
+  _memberPickers[modalKey] = { members: members, onChange: onChange };
+  renderMembersList(modalKey, containerId, availInputId, addBtnId, availPeople);
+}
+function renderMembersList(modalKey, containerId, availInputId, addBtnId, availPeople) {
+  var state = _memberPickers[modalKey];
+  if (!state) return;
+  var members = state.members;
+
+  // Render current members
+  var listEl = document.getElementById(containerId);
+  listEl.innerHTML = '';
+  members.forEach(function(m, idx) {
+    var tag = document.createElement('span');
+    tag.className = 'pastel-tag member-tag';
+    tag.style.background = pastelFor(m);
+    tag.style.color = '#000000';
+    tag.innerHTML = esc(m) + ' <span class="remove" data-idx="' + idx + '">X</span>';
+    tag.querySelector('.remove').addEventListener('click', function(e) {
+      e.stopPropagation();
+      members.splice(parseInt(this.dataset.idx), 1);
+      renderMembersList(modalKey, containerId, availInputId, addBtnId, availPeople);
+      if (state.onChange) state.onChange(members);
+    });
+    listEl.appendChild(tag);
+  });
+
+  // Render available people (not already in members)
+  var availEl = document.getElementById(availInputId.replace('-new-member', '-avail'));
+  if (!availEl) availEl = document.getElementById(availInputId);
+  // Find the avail grid
+  var gridId = containerId.replace('-members-list', '-avail');
+  var grid = document.getElementById(gridId);
+  if (grid) {
+    grid.innerHTML = '';
+    availPeople.forEach(function(name) {
+      if (members.indexOf(name) >= 0) return;
+      var btn = document.createElement('button');
+      btn.textContent = name;
+      btn.addEventListener('click', function() {
+        members.push(name);
+        renderMembersList(modalKey, containerId, availInputId, addBtnId, availPeople);
+        if (state.onChange) state.onChange(members);
+      });
+      grid.appendChild(btn);
+    });
+  }
+}
+
 // ===================================================================
 syncBtn.addEventListener('click', function() {
   if (typeof API_TOKEN=== 'undefined' || !API_TOKEN) { setSyncText('No token'); return; }
@@ -504,17 +610,38 @@ document.getElementById('proj-del').addEventListener('click', function() {
 document.getElementById('team-add').addEventListener('click', function() {
   if (selProj === null) { alert('Select a project first.'); return; }
   document.getElementById('team-modal-name').value = '';
-  document.getElementById('team-modal-members').value = '';
+  var members = [];
+  var availPeople = getProjectPeople(selProj);
+  renderMemberPicker('add', 'team-modal-members-list', 'team-modal-new-member', 'team-modal-add-member', members, availPeople, function(m) { members = m; });
   document.getElementById('team-modal-overlay').style.display = 'flex';
   document.getElementById('team-modal-name').focus();
+});
+
+document.getElementById('team-modal-add-member').addEventListener('click', function() {
+  var input = document.getElementById('team-modal-new-member');
+  var name = input.value.trim();
+  if (!name) return;
+  var state = _memberPickers['add'];
+  if (state && state.members.indexOf(name) < 0) {
+    state.members.push(name);
+    var availPeople = getProjectPeople(selProj);
+    renderMembersList('add', 'team-modal-members-list', 'team-modal-new-member', 'team-modal-add-member', availPeople);
+  }
+  input.value = '';
+  input.focus();
+});
+
+document.getElementById('team-modal-new-member').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') document.getElementById('team-modal-add-member').click();
 });
 
 document.getElementById('team-modal-ok').addEventListener('click', function() {
   var name = document.getElementById('team-modal-name').value.trim();
   if (!name) { alert('Team name required.'); return; }
-  var members = document.getElementById('team-modal-members').value.split(',').map(function(s) { return s.trim(); }).filter(function(s) { return s; });
+  var state = _memberPickers['add'];
+  var members = state ? state.members : [];
   if (members.length === 0) { alert('At least one member required.'); return; }
-  var newTeam = { id: nextId(data.teams), name: name, members: members };
+  var newTeam = { id: nextId(data.teams), name: name, members: members.slice() };
   data.teams.push(newTeam);
   for (var i = 0; i < data.projects.length; i++) {
     if (data.projects[i].id === selProj) {
@@ -538,17 +665,37 @@ document.getElementById('team-edit').addEventListener('click', function() {
   for (var i = 0; i < data.teams.length; i++) { if (data.teams[i].id === selTeam) { team = data.teams[i]; break; } }
   if (!team) return;
   document.getElementById('team-edit-name').value = team.name;
-  document.getElementById('team-edit-members').value = team.members.join(', ');
+  var members = team.members.slice();
+  var availPeople = getProjectPeople(selProj);
+  renderMemberPicker('edit', 'team-edit-members-list', 'team-edit-new-member', 'team-edit-add-member', members, availPeople, function(m) { members = m; });
   document.getElementById('team-edit-overlay').style.display = 'flex';
+});
+
+document.getElementById('team-edit-add-member').addEventListener('click', function() {
+  var input = document.getElementById('team-edit-new-member');
+  var name = input.value.trim();
+  if (!name) return;
+  var state = _memberPickers['edit'];
+  if (state && state.members.indexOf(name) < 0) {
+    state.members.push(name);
+    var availPeople = getProjectPeople(selProj);
+    renderMembersList('edit', 'team-edit-members-list', 'team-edit-new-member', 'team-edit-add-member', availPeople);
+  }
+  input.value = '';
+  input.focus();
+});
+
+document.getElementById('team-edit-new-member').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') document.getElementById('team-edit-add-member').click();
 });
 
 document.getElementById('team-edit-ok').addEventListener('click', function() {
   var name = document.getElementById('team-edit-name').value.trim();
   if (!name) { alert('Team name required.'); return; }
-  var members = document.getElementById('team-edit-members').value.split(',').map(function(s) { return s.trim(); }).filter(function(s) { return s; });
-  if (members.length === 0) { alert('At least one member required.'); return; }
+  var state = _memberPickers['edit'];
+  if (!state || state.members.length === 0) { alert('At least one member required.'); return; }
   for (var i = 0; i < data.teams.length; i++) {
-    if (data.teams[i].id === selTeam) { data.teams[i].name = name; data.teams[i].members = members; break; }
+    if (data.teams[i].id === selTeam) { data.teams[i].name = name; data.teams[i].members = state.members.slice(); break; }
   }
   persist();
   document.getElementById('team-edit-overlay').style.display = 'none';
