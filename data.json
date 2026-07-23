@@ -122,6 +122,42 @@
       "name": "Pumpkin Launcher",
       "teams": [],
       "tasks": []
+    },
+    {
+      "id": 4,
+      "name": "Sign In Kiosk",
+      "teams": [],
+      "tasks": []
+    },
+    {
+      "id": 5,
+      "name": "Digital Event Sign In",
+      "teams": [],
+      "tasks": []
+    },
+    {
+      "id": 6,
+      "name": "Modernize Prusa Mk3s",
+      "teams": [],
+      "tasks": []
+    },
+    {
+      "id": 7,
+      "name": "Organize Electronics Inventory",
+      "teams": [],
+      "tasks": []
+    },
+    {
+      "id": 8,
+      "name": "Orgnainze Hardware Inventory",
+      "teams": [],
+      "tasks": []
+    },
+    {
+      "id": 9,
+      "name": "Organize ELC Storage",
+      "teams": [],
+      "tasks": []
     }
   ]
 }
