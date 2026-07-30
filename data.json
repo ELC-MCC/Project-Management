@@ -101,11 +101,12 @@
           "id": 2,
           "title": "Create Wiring Harness",
           "desc": "",
-          "status": "In Progress",
+          "status": "Done",
           "team": 8,
           "persons": [
             "Vitaliy"
-          ]
+          ],
+          "archived": true
         }
       ]
     },
