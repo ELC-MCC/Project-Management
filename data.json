@@ -139,7 +139,54 @@
       "id": 4,
       "name": "Sign In Kiosk",
       "teams": [],
-      "tasks": []
+      "tasks": [
+        {
+          "id": 1,
+          "title": "Relocate Post(s)",
+          "desc": "Add 2 posts on rear corners to mount walls and transition to 4 wheels",
+          "status": "Pending",
+          "team": 0,
+          "persons": [
+            "Karma"
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Add walls",
+          "desc": "Put walls on sides and rear of cart in order to look nicer/transform into trophy case",
+          "status": "Pending",
+          "team": 0,
+          "persons": [
+            "Karma"
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Make and Install Cart Door",
+          "desc": "Create and install a plexiglass door for the front of the cart",
+          "status": "Pending",
+          "team": 0,
+          "persons": [
+            "Connor"
+          ]
+        },
+        {
+          "id": 4,
+          "title": "Transition to 4 Wheels",
+          "desc": "Once posts are installed, attatch wheels to the new posts",
+          "status": "Pending",
+          "team": 0,
+          "persons": []
+        },
+        {
+          "id": 5,
+          "title": "Add Shelving",
+          "desc": "Install pegs and shelves inside once walls and door are completed",
+          "status": "Pending",
+          "team": 0,
+          "persons": []
+        }
+      ]
     },
     {
       "id": 5,
