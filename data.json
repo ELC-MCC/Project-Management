@@ -144,7 +144,7 @@
           "id": 1,
           "title": "Relocate Post(s)",
           "desc": "Add 2 posts on rear corners to mount walls and transition to 4 wheels",
-          "status": "Pending",
+          "status": "In Progress",
           "team": 0,
           "persons": [
             "Karma"
@@ -154,7 +154,7 @@
           "id": 2,
           "title": "Add walls",
           "desc": "Put walls on sides and rear of cart in order to look nicer/transform into trophy case",
-          "status": "Pending",
+          "status": "In Progress",
           "team": 0,
           "persons": [
             "Karma"
