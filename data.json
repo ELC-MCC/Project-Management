@@ -66,56 +66,13 @@
         "Jacob",
         "Marc"
       ]
-    },
-    {
-      "id": 9,
-      "name": "CAD Team",
-      "members": [
-        "Connor",
-        "Jacob",
-        "Vitaliy"
-      ]
     }
   ],
   "projects": [
     {
-      "id": 1,
-      "name": "Nano-Baja Team",
-      "teams": [
-        4,
-        5,
-        6,
-        7,
-        8
-      ],
-      "tasks": [
-        {
-          "id": 1,
-          "title": "Design Chassis",
-          "desc": "",
-          "status": "Pending",
-          "team": 4,
-          "persons": []
-        },
-        {
-          "id": 2,
-          "title": "Create Wiring Harness",
-          "desc": "",
-          "status": "Done",
-          "team": 8,
-          "persons": [
-            "Vitaliy"
-          ],
-          "archived": true
-        }
-      ]
-    },
-    {
       "id": 2,
       "name": "R2-ELC",
-      "teams": [
-        9
-      ],
+      "teams": [],
       "tasks": []
     },
     {
