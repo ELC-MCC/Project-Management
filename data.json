@@ -101,6 +101,14 @@
           "id": 1,
           "title": "Design New Build for Cart",
           "desc": "",
+          "status": "In Progress",
+          "team": 0,
+          "persons": []
+        },
+        {
+          "id": 2,
+          "title": "Get Wood for New Cart",
+          "desc": "",
           "status": "Pending",
           "team": 0,
           "persons": []
