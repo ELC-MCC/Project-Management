@@ -143,7 +143,16 @@
       "id": 9,
       "name": "Organize ELC Storage",
       "teams": [],
-      "tasks": []
+      "tasks": [
+        {
+          "id": 1,
+          "title": "Fire Cabinet",
+          "desc": "Get info on what items need to go in fire cabinet/need to be disposed",
+          "status": "Pending",
+          "team": 0,
+          "persons": []
+        }
+      ]
     },
     {
       "id": 10,
