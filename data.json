@@ -173,7 +173,8 @@
           "desc": "",
           "status": "Done",
           "team": 0,
-          "persons": []
+          "persons": [],
+          "archived": true
         },
         {
           "id": 3,
