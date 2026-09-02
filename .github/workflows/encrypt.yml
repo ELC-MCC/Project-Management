@@ -3,6 +3,8 @@ name: Encrypt and Deploy
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'data.json'
 
 jobs:
   encrypt-and-deploy:
