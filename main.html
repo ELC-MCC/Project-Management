@@ -578,7 +578,7 @@ syncBtn.addEventListener('click', function() {
   setSyncText('Syncing...');
   setSyncColor('yellow');
   pushToRepo(data).then(function() { setSyncText('Synced'); setSyncColor('green'); })
-    .catch(function(e) { setSyncText('Error'); setSyncColor('red'); });
+    .catch(function(e) { setSyncText('Error: ' + e.message); setSyncColor('red'); });
 });
 
 // ===================================================================
