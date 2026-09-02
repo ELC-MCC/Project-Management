@@ -146,3 +146,4 @@ The app auto-saves to your browser's localStorage instantly. The Sync button is 
 - Multiple people can work at the same time. After someone else syncs, refresh the page (or wait for auto-load) to get their changes.
 - Tasks can be assigned to multiple people even if they're on different teams — just type all their names in the "Assign People" field.
 - Team members are just names. There are no user accounts — the password gates the whole app.
+# ELCPM
