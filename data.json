@@ -116,12 +116,6 @@
       ]
     },
     {
-      "id": 5,
-      "name": "Digital Event Sign In",
-      "teams": [],
-      "tasks": []
-    },
-    {
       "id": 6,
       "name": "Modernize Prusa Mk3s",
       "teams": [],
@@ -151,41 +145,6 @@
           "status": "In Progress",
           "team": 0,
           "persons": []
-        }
-      ]
-    },
-    {
-      "id": 10,
-      "name": "Orientation Prep",
-      "teams": [],
-      "tasks": [
-        {
-          "id": 1,
-          "title": "Print Trinkets to give out",
-          "desc": "",
-          "status": "In Progress",
-          "team": 0,
-          "persons": []
-        },
-        {
-          "id": 2,
-          "title": "Organize/Plan Table",
-          "desc": "",
-          "status": "Done",
-          "team": 0,
-          "persons": [],
-          "archived": true
-        },
-        {
-          "id": 3,
-          "title": "Put trinkets on key rings",
-          "desc": "Once the key rings come in, put the dinosaurs and sharks on them (Have enough ready for the first week of orientations)",
-          "status": "In Progress",
-          "team": 0,
-          "persons": [
-            "Karma",
-            "Hasana"
-          ]
         }
       ]
     }
