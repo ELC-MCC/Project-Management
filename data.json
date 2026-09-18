@@ -84,11 +84,12 @@
           "id": 1,
           "title": "Obtain The Pumpkin Launcher",
           "desc": "We gotta get the pumpkin launcher from downtown",
-          "status": "In Progress",
+          "status": "Done",
           "team": 0,
           "persons": [
             "Connor"
-          ]
+          ],
+          "archived": true
         }
       ]
     },
