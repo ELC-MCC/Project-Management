@@ -99,16 +99,6 @@
             "Connor"
           ],
           "archived": true
-        },
-        {
-          "id": 2,
-          "title": "Check State of Launcher",
-          "desc": "When the pumpkin launcher arrives check on it's functionality",
-          "status": "Pending",
-          "team": 0,
-          "persons": [
-            "Karma"
-          ]
         }
       ]
     },
