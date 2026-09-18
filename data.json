@@ -66,6 +66,13 @@
         "Jacob",
         "Marc"
       ]
+    },
+    {
+      "id": 9,
+      "name": "Project Lead",
+      "members": [
+        "Paul"
+      ]
     }
   ],
   "projects": [
@@ -78,7 +85,9 @@
     {
       "id": 3,
       "name": "Pumpkin Launcher",
-      "teams": [],
+      "teams": [
+        9
+      ],
       "tasks": [
         {
           "id": 1,
