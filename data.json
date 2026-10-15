@@ -66,13 +66,6 @@
         "Jacob",
         "Marc"
       ]
-    },
-    {
-      "id": 9,
-      "name": "Project Lead",
-      "members": [
-        "Paul"
-      ]
     }
   ],
   "projects": [
@@ -85,9 +78,7 @@
     {
       "id": 3,
       "name": "Pumpkin Launcher",
-      "teams": [
-        9
-      ],
+      "teams": [],
       "tasks": [
         {
           "id": 1,
@@ -99,6 +90,54 @@
             "Connor"
           ],
           "archived": true
+        },
+        {
+          "id": 2,
+          "title": "Attach Winch",
+          "desc": "",
+          "status": "Pending",
+          "team": 0,
+          "persons": []
+        },
+        {
+          "id": 3,
+          "title": "Attach New Posts",
+          "desc": "",
+          "status": "Pending",
+          "team": 0,
+          "persons": []
+        },
+        {
+          "id": 4,
+          "title": "Attach Plates and Bands",
+          "desc": "",
+          "status": "Pending",
+          "team": 0,
+          "persons": []
+        },
+        {
+          "id": 5,
+          "title": "Attach Basket",
+          "desc": "",
+          "status": "Pending",
+          "team": 0,
+          "persons": []
+        },
+        {
+          "id": 6,
+          "title": "Fix Wheels",
+          "desc": "",
+          "status": "Pending",
+          "team": 0,
+          "persons": []
+        },
+        {
+          "id": 7,
+          "title": "Finish sizing and Paint/Prime Side Panels",
+          "desc": "",
+          "status": "Pending",
+          "team": 0,
+          "persons": []
         }
       ]
     },
