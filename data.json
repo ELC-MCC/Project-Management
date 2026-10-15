@@ -138,6 +138,34 @@
           "status": "Pending",
           "team": 0,
           "persons": []
+        },
+        {
+          "id": 8,
+          "title": "Attach Side Panels once Painted",
+          "desc": "",
+          "status": "Pending",
+          "team": 0,
+          "persons": []
+        },
+        {
+          "id": 9,
+          "title": "Test Firing",
+          "desc": "",
+          "status": "Pending",
+          "team": 0,
+          "persons": []
+        },
+        {
+          "id": 10,
+          "title": "Finish Optimizing Mathematical Requirements",
+          "desc": "",
+          "status": "In Progress",
+          "team": 0,
+          "persons": [
+            "Connor",
+            "Jacob",
+            "Karma"
+          ]
         }
       ]
     },
