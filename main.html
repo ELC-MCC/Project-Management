@@ -13,59 +13,131 @@
   <div class="login-box">
     <h1>ELC Project Management</h1>
     <p>Select your role to continue</p>
+    <label for="login-role">Role</label>
     <select id="login-role">
       <option value="member">Member</option>
       <option value="officer">Officer</option>
     </select>
     <div id="login-pw-wrap">
+      <label for="login-pw">Officer password</label>
       <input type="password" id="login-pw" placeholder="Officer password">
     </div>
     <div class="err" id="login-err"></div>
     <button id="login-btn">Enter</button>
+    <div class="login-hint">
+      <b>MEMBER</b> - view the sheet, change status, due date and notes, sync<br>
+      <b>OFFICER</b> - full control: projects, teams, tasks, delete
+    </div>
   </div>
 </div>
 
 <header class="topbar">
+  <div class="brand">
+    <span class="brand-title">ELC Project Management</span>
+    <span class="role-badge" id="role-badge">MEMBER</span>
+  </div>
   <div class="sync-group">
     <span class="sync-status-text" id="sync-status-text">Idle</span>
     <button id="sync-btn" class="sync-btn green">Sync</button>
-    <button id="logout-btn" class="sync-btn" style="background:#333333;color:#CC9700;border-color:#555555">Logout</button>
+    <button id="logout-btn" class="sync-btn">Logout</button>
   </div>
 </header>
 
-<div class="main">
+<div class="workspace">
 
-  <!-- LEFT: Projects -->
-  <div class="panel panel-left">
-    <div class="panel-head">Projects</div>
-    <div class="panel-body" id="proj-list"></div>
-    <div class="panel-foot">
-      <button class="btn btn-add" id="proj-add">+ Add</button>
-      <button class="btn btn-del" id="proj-del">Delete</button>
-    </div>
-  </div>
+  <!-- LEFT: Projects + Teams -->
+  <aside class="sidebar">
+    <section class="side-block projects">
+      <div class="side-head">
+        <span>Projects</span>
+        <span class="side-note" id="proj-note">0 active</span>
+      </div>
+      <div class="side-body" id="proj-list"></div>
+      <div class="panel-foot">
+        <button class="btn btn-add" id="proj-add">+ Add</button>
+        <button class="btn btn-edit" id="proj-rename">Rename</button>
+        <button class="btn btn-del" id="proj-del">Delete</button>
+      </div>
+    </section>
 
-  <!-- MIDDLE: Teams -->
-  <div class="panel panel-mid">
-    <div class="panel-head" id="team-head">Teams</div>
-    <div class="panel-body" id="team-list"></div>
-    <div class="panel-foot">
-      <button class="btn btn-add" id="team-add">+ Add</button>
-      <button class="btn btn-edit" id="team-edit">Edit</button>
-      <button class="btn btn-del" id="team-del">Delete</button>
-    </div>
-  </div>
+    <section class="side-block teams">
+      <div class="side-head">
+        <span>Teams</span>
+        <span class="side-note" id="team-note"></span>
+      </div>
+      <div class="side-body" id="team-list"></div>
+      <div class="panel-foot">
+        <button class="btn btn-add" id="team-add">+ Add</button>
+        <button class="btn btn-neutral" id="team-attach">Attach</button>
+        <button class="btn btn-edit" id="team-edit">Edit</button>
+        <button class="btn btn-del" id="team-del">Delete</button>
+      </div>
+    </section>
+  </aside>
 
-  <!-- RIGHT: Tasks -->
-  <div class="panel panel-right">
-    <div class="panel-head" id="task-head">Tasks</div>
-    <div class="panel-body" id="task-list"></div>
-    <div class="panel-foot">
-      <button class="btn btn-add" id="task-add">+ Add</button>
-      <button class="btn btn-del" id="task-del">Delete</button>
-      <button class="btn btn-edit" id="task-toggle-archive" style="margin-left:auto;font-size:11px">Show Finished</button>
+  <!-- RIGHT: Task sheet -->
+  <section class="content">
+    <div class="content-head">
+      <div class="content-title-wrap">
+        <div class="content-title" id="task-head">No project selected</div>
+        <div class="content-sub" id="project-sub"></div>
+      </div>
+      <div class="content-tools">
+        <button class="btn-neutral" id="task-add">+ Add Task</button>
+        <button class="btn-neutral" id="task-edit">Edit Task</button>
+        <button class="btn-neutral" id="task-del">Delete Task</button>
+        <button class="btn-neutral" id="export-csv">Export CSV</button>
+      </div>
     </div>
-  </div>
+
+    <div class="toolbar">
+      <div class="chips" id="status-chips"></div>
+      <input type="text" id="search-box" placeholder="Search tasks...">
+      <select id="assignee-filter"></select>
+      <span class="spacer"></span>
+      <button class="tbtn" id="task-toggle-archive">Show Finished</button>
+    </div>
+
+    <div class="stats" id="stats-row"></div>
+
+    <div class="sheet-wrap">
+      <table class="sheet" id="sheet-table">
+        <colgroup>
+          <col style="width:36px">
+          <col>
+          <col style="width:130px">
+          <col style="width:158px">
+          <col style="width:104px">
+          <col style="width:222px">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th class="sortable" data-sort="title">Task <span class="sort-mark" id="mark-title"></span></th>
+            <th class="sortable" data-sort="status">Status <span class="sort-mark" id="mark-status"></span></th>
+            <th class="sortable" data-sort="assigned">Assigned <span class="sort-mark" id="mark-assigned"></span></th>
+            <th>Team</th>
+            <th class="sortable" data-sort="due">Due date / time <span class="sort-mark" id="mark-due"></span></th>
+          </tr>
+        </thead>
+        <tbody id="task-list"></tbody>
+      </table>
+      <div id="sheet-empty" class="empty" style="display:none"></div>
+    </div>
+
+    <div class="sheet-foot">
+      <span id="sheet-count">0 tasks</span>
+      <span class="legend">
+        <span class="st-pending">PENDING</span>
+        <span class="st-progress">IN PROGRESS</span>
+        <span class="st-review">IN REVIEW</span>
+        <span class="st-hold">ON HOLD</span>
+        <span class="st-done">DONE</span>
+        <span class="du-overdue">OVERDUE</span>
+        <span class="du-today">DUE TODAY</span>
+      </span>
+    </div>
+  </section>
 
 </div>
 
@@ -74,15 +146,52 @@
   <div class="modal-box">
     <h2 id="modal-title">New Task</h2>
     <label for="modal-title-input">Title</label>
-    <input id="modal-title-input" type="text">
+    <input id="modal-title-input" type="text" placeholder="What needs to get done?">
+
     <label for="modal-desc-input">Description</label>
-    <textarea id="modal-desc-input" rows="3"></textarea>
-    <label for="modal-team-select">Assign Team</label>
-    <select id="modal-team-select"><option value="0">-- None --</option></select>
-    <label for="modal-persons-input">Assign People (comma separated)</label>
-    <input id="modal-persons-input" type="text" placeholder="Alice, Bob, Charlie">
+    <textarea id="modal-desc-input" rows="2" placeholder="Optional details"></textarea>
+
+    <div class="modal-row">
+      <div class="modal-col">
+        <label for="modal-status-select">Status</label>
+        <select id="modal-status-select"></select>
+      </div>
+      <div class="modal-col">
+        <label for="modal-team-select">Team</label>
+        <select id="modal-team-select"><option value="0">-- None --</option></select>
+      </div>
+    </div>
+
+    <label>Assigned people</label>
+    <div class="member-area">
+      <div id="task-modal-members-list"></div>
+      <div class="member-area-label">Add from project:</div>
+      <div id="task-modal-avail" class="avail-grid"></div>
+      <div class="add-row">
+        <input id="task-modal-new-person" type="text" placeholder="Name">
+        <button id="task-modal-add-person" class="mbtn-small">+ Add</button>
+      </div>
+    </div>
+
+    <div class="modal-row">
+      <div class="modal-col">
+        <label for="modal-due-date">Due date</label>
+        <input id="modal-due-date" type="date">
+      </div>
+      <div class="modal-col">
+        <label for="modal-due-time">Due time</label>
+        <input id="modal-due-time" type="time">
+      </div>
+    </div>
+    <div class="quick-row">
+      <button class="mbtn-small" data-quick="today">Today</button>
+      <button class="mbtn-small" data-quick="tomorrow">Tomorrow</button>
+      <button class="mbtn-small" data-quick="week">In 1 week</button>
+      <button class="mbtn-small" data-quick="clear">Clear date</button>
+    </div>
+
     <div class="modal-btns">
-      <button id="modal-ok" class="mbtn-ok">OK</button>
+      <button id="modal-ok" class="mbtn-ok">Save</button>
       <button id="modal-cancel" class="mbtn-cancel">Cancel</button>
     </div>
   </div>
@@ -144,12 +253,37 @@
   </div>
 </div>
 
+<!-- ================ ATTACH TEAM MODAL ================ -->
+<div id="attach-overlay" class="modal-overlay" style="display:none">
+  <div class="modal-box" style="width:420px">
+    <h2>Attach Team To Project</h2>
+    <div class="member-area-label">Teams in the library, not yet on this project:</div>
+    <div id="attach-list" class="avail-grid"></div>
+    <div class="modal-btns">
+      <button id="attach-close" class="mbtn-cancel">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================ SIMPLE TEXT MODAL ================ -->
+<div id="text-modal-overlay" class="modal-overlay" style="display:none">
+  <div class="modal-box" style="width:360px">
+    <h2 id="text-modal-title">Rename</h2>
+    <label id="text-modal-label" for="text-modal-input">Name</label>
+    <input id="text-modal-input" type="text">
+    <div class="modal-btns">
+      <button id="text-modal-ok" class="mbtn-ok">OK</button>
+      <button id="text-modal-cancel" class="mbtn-cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ===================================================================
 var STATUSES = ['Pending', 'In Progress', 'In Review', 'Done', 'On Hold'];
+var STATUS_ORDER = { 'Pending': 1, 'In Progress': 2, 'In Review': 3, 'On Hold': 4, 'Done': 5 };
 
 var PASTELS = ['#FFB3BA','#BAFFC9','#BAE1FF','#FFFFBA','#E8BAFF','#FFD9BA','#BAFFF5','#FFC3E0','#C3FFC3','#C3D9FF'];
-
 function pastelFor(name) {
   var hash = 0;
   for (var i = 0; i < name.length; i++) hash = ((hash << 5) - hash) + name.charCodeAt(i);
@@ -157,12 +291,77 @@ function pastelFor(name) {
 }
 
 function statusClass(s) {
-  if (s === 'Pending') return 'ps-pending';
-  if (s === 'In Progress') return 'ps-progress';
-  if (s === 'In Review') return 'ps-review';
-  if (s === 'Done') return 'ps-done';
-  if (s === 'On Hold') return 'ps-hold';
+  if (s === 'Pending') return 'st-pending';
+  if (s === 'In Progress') return 'st-progress';
+  if (s === 'In Review') return 'st-review';
+  if (s === 'Done') return 'st-done';
+  if (s === 'On Hold') return 'st-hold';
   return '';
+}
+
+// ---------------- Date / time helpers ----------------
+function pad2(n) { return (n < 10 ? '0' : '') + n; }
+function ymd(d) { return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); }
+function todayStr() { return ymd(new Date()); }
+function addDaysStr(days) { var d = new Date(); d.setDate(d.getDate() + days); return ymd(d); }
+
+function parseDue(t) {
+  if (!t || !t.dueDate) return null;
+  var p = String(t.dueDate).split('-');
+  if (p.length !== 3) return null;
+  var hh = 0, mm = 0;
+  if (t.dueTime) {
+    var tp = String(t.dueTime).split(':');
+    hh = parseInt(tp[0], 10) || 0;
+    mm = parseInt(tp[1], 10) || 0;
+  }
+  var d = new Date(parseInt(p[0], 10), parseInt(p[1], 10) - 1, parseInt(p[2], 10), hh, mm, 0, 0);
+  if (isNaN(d.getTime())) return null;
+  return d;
+}
+
+function fmtTime(hm) {
+  if (!hm) return '';
+  var p = String(hm).split(':');
+  var h = parseInt(p[0], 10);
+  if (isNaN(h)) return '';
+  var m = p[1] || '00';
+  var ap = h >= 12 ? 'PM' : 'AM';
+  h = h % 12; if (h === 0) h = 12;
+  return h + ':' + m + ' ' + ap;
+}
+
+var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+function fmtDate(d) {
+  if (!d) return '';
+  return DAYS[d.getDay()] + ' ' + MONTHS[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+}
+
+// Excel-style traffic light for the due cell
+function dueInfo(t) {
+  var d = parseDue(t);
+  if (!d) return { key: 'none', label: 'NO DATE', ms: null, days: null, date: null };
+  if (t.status === 'Done') {
+    return { key: 'done', label: 'COMPLETED', ms: d.getTime() - Date.now(), days: 0, date: d };
+  }
+  var now = new Date();
+  var diff = d.getTime() - now.getTime();
+  var startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var startDue = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  var days = Math.round((startDue.getTime() - startToday.getTime()) / 86400000);
+
+  if (diff < 0) {
+    var lateLabel;
+    if (days < 0) lateLabel = 'OVERDUE ' + Math.abs(days) + 'D';
+    else if (Math.abs(diff) >= 3600000) lateLabel = 'LATE ' + Math.round(Math.abs(diff) / 3600000) + 'H';
+    else lateLabel = 'LATE ' + Math.max(1, Math.round(Math.abs(diff) / 60000)) + 'M';
+    return { key: 'overdue', label: lateLabel, ms: diff, days: days, date: d };
+  }
+  if (days === 0) return { key: 'today', label: 'TODAY ' + (t.dueTime ? fmtTime(t.dueTime) : ''), ms: diff, days: 0, date: d };
+  if (days === 1) return { key: 'soon', label: 'TOMORROW', ms: diff, days: 1, date: d };
+  if (days <= 7) return { key: 'soon', label: 'IN ' + days + 'D', ms: diff, days: days, date: d };
+  return { key: 'later', label: 'IN ' + days + 'D', ms: diff, days: days, date: d };
 }
 
 // ===================================================================
@@ -173,13 +372,13 @@ var SEED_DATA = {
   ],
   projects: [
     { id: 1, name: 'Website Redesign', teams: [1], tasks: [
-      { id: 1, title: 'Wireframe homepage', desc: '', status: 'Done', team: 1, persons: ['Alice'] },
-      { id: 2, title: 'Design color palette', desc: 'Pick primary and accent colors', status: 'In Progress', team: 1, persons: ['Bob'] },
-      { id: 3, title: 'Build components', desc: '', status: 'Pending', team: 0, persons: [] }
+      { id: 1, title: 'Wireframe homepage', desc: '', status: 'Done', team: 1, persons: ['Alice'], dueDate: '', dueTime: '' },
+      { id: 2, title: 'Design color palette', desc: 'Pick primary and accent colors', status: 'In Progress', team: 1, persons: ['Bob'], dueDate: '', dueTime: '' },
+      { id: 3, title: 'Build components', desc: '', status: 'Pending', team: 0, persons: [], dueDate: '', dueTime: '' }
     ]},
     { id: 2, name: 'Mobile App v2', teams: [2], tasks: [
-      { id: 1, title: 'Set up CI/CD', desc: '', status: 'Done', team: 2, persons: ['Charlie'] },
-      { id: 2, title: 'Implement dark mode', desc: '', status: 'In Progress', team: 2, persons: ['Diana'] }
+      { id: 1, title: 'Set up CI/CD', desc: '', status: 'Done', team: 2, persons: ['Charlie'], dueDate: '', dueTime: '' },
+      { id: 2, title: 'Implement dark mode', desc: '', status: 'In Progress', team: 2, persons: ['Diana'], dueDate: '', dueTime: '' }
     ]}
   ]
 };
@@ -193,7 +392,6 @@ var BRANCH = 'main';
 // ===================================================================
 var syncBtn = document.getElementById('sync-btn');
 var syncStatusEl = document.getElementById('sync-status-text');
-
 function setSyncColor(state) { syncBtn.className = 'sync-btn ' + state; }
 function setSyncText(text) { syncStatusEl.textContent = text; }
 
@@ -203,12 +401,12 @@ async function fetchFromRepo() {
   if (!res.ok) throw new Error('Fetch failed: ' + res.status);
   return await res.json();
 }
-async function pushToRepo(data) {
+async function pushToRepo(payload) {
   var getUrl = 'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/' + DATA_PATH;
   var getRes = await fetch(getUrl, { headers: { 'Authorization': 'Bearer ' + API_TOKEN } });
   if (!getRes.ok) throw new Error('Failed to get file info: ' + getRes.status);
   var meta = await getRes.json();
-  var content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+  var content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
   var putRes = await fetch(getUrl, {
     method: 'PUT',
     headers: { 'Authorization': 'Bearer ' + API_TOKEN, 'Content-Type': 'application/json' },
@@ -221,13 +419,40 @@ async function pushToRepo(data) {
 function loadLocal() {
   var raw = localStorage.getItem('elc_data');
   if (!raw) return null;
-  try { return JSON.parse(raw); } catch(e) { return null; }
+  try { return JSON.parse(raw); } catch (e) { return null; }
 }
-function saveLocal(data) { localStorage.setItem('elc_data', JSON.stringify(data)); }
+function saveLocal(d) { localStorage.setItem('elc_data', JSON.stringify(d)); }
+
+function normalizeData(d) {
+  if (!d || typeof d !== 'object') return JSON.parse(JSON.stringify(SEED_DATA));
+  if (!Array.isArray(d.teams)) d.teams = [];
+  if (!Array.isArray(d.projects)) d.projects = [];
+  d.teams.forEach(function (t) {
+    if (!Array.isArray(t.members)) t.members = [];
+    if (typeof t.id !== 'number') t.id = parseInt(t.id, 10) || 0;
+  });
+  d.projects.forEach(function (p) {
+    if (!Array.isArray(p.teams)) p.teams = [];
+    if (!Array.isArray(p.tasks)) p.tasks = [];
+    if (typeof p.id !== 'number') p.id = parseInt(p.id, 10) || 0;
+    p.tasks.forEach(function (t) {
+      if (!Array.isArray(t.persons)) t.persons = [];
+      t.team = parseInt(t.team, 10) || 0;
+      if (typeof t.dueDate !== 'string') t.dueDate = '';
+      if (typeof t.dueTime !== 'string') t.dueTime = '';
+      if (typeof t.desc !== 'string') t.desc = '';
+      if (typeof t.title !== 'string') t.title = '';
+      if (STATUSES.indexOf(t.status) < 0) t.status = 'Pending';
+      if (typeof t.id !== 'number') t.id = parseInt(t.id, 10) || 0;
+    });
+  });
+  return d;
+}
+
 function getData() {
   var d = loadLocal();
-  if (!d) { saveLocal(SEED_DATA); return JSON.parse(JSON.stringify(SEED_DATA)); }
-  return d;
+  if (!d) { saveLocal(SEED_DATA); return normalizeData(JSON.parse(JSON.stringify(SEED_DATA))); }
+  return normalizeData(d);
 }
 
 var data = getData();
@@ -236,6 +461,13 @@ var selTeam = null;
 var selTask = null;
 var showArchived = false;
 var userRole = null;
+var filterStatus = null;
+var filterPerson = '';
+var searchQuery = '';
+var sortKey = 'due';
+var sortDir = 1;
+var modalMode = 'new';
+var modalTaskId = null;
 
 // ===================================================================
 //  Role login
@@ -245,41 +477,46 @@ var loginPw = document.getElementById('login-pw');
 var loginPwWrap = document.getElementById('login-pw-wrap');
 var loginErr = document.getElementById('login-err');
 
-// Show/hide password field based on role
-loginRole.addEventListener('change', function() {
+loginRole.addEventListener('change', function () {
   loginPwWrap.style.display = (this.value === 'officer') ? 'block' : 'none';
   loginErr.textContent = '';
 });
-loginPwWrap.style.display = 'none'; // Member selected by default
+loginPwWrap.style.display = 'none';
 
-document.getElementById('login-btn').addEventListener('click', function() {
+function applyRole() {
+  var badge = document.getElementById('role-badge');
+  badge.textContent = userRole === 'officer' ? 'OFFICER' : 'MEMBER';
+  badge.className = 'role-badge' + (userRole === 'officer' ? ' officer' : '');
+  if (userRole === 'member') document.body.classList.add('member-mode');
+  else document.body.classList.remove('member-mode');
+}
+
+document.getElementById('login-btn').addEventListener('click', function () {
   var role = loginRole.value;
 
   if (role === 'member') {
     userRole = 'member';
     document.getElementById('login-overlay').classList.add('hidden');
-    document.body.classList.add('member-mode');
-    document.getElementById('login-pw').value = '';
+    loginPw.value = '';
+    applyRole();
     renderAll();
     return;
   }
 
-  if (role === 'officer') {
-    var pw = loginPw.value;
-    if (typeof OFFICER_PASSWORD !== 'undefined' && pw === OFFICER_PASSWORD) {
-      userRole = 'officer';
-      document.getElementById('login-overlay').classList.add('hidden');
-      document.body.classList.remove('member-mode');
-      document.getElementById('login-pw').value = '';
-      renderAll();
-    } else {
-      loginErr.textContent = 'Incorrect password';
-      loginPw.value = '';
-    }
+  var pw = loginPw.value;
+  if (typeof OFFICER_PASSWORD !== 'undefined' && pw === OFFICER_PASSWORD) {
+    userRole = 'officer';
+    document.getElementById('login-overlay').classList.add('hidden');
+    loginPw.value = '';
+    applyRole();
+    renderAll();
+  } else {
+    loginErr.textContent = 'Incorrect password';
+    loginPw.value = '';
   }
 });
 
-loginPw.addEventListener('keydown', function(e) {
+loginPw.addEventListener('keydown', function (e) {
   if (e.key === 'Enter') document.getElementById('login-btn').click();
 });
 
@@ -288,18 +525,19 @@ function initData() {
   if (typeof API_TOKEN !== 'undefined' && API_TOKEN !== '') {
     setSyncText('Loading...');
     setSyncColor('yellow');
-    fetchFromRepo().then(function(remote) {
-      data = remote;
+    fetchFromRepo().then(function (remote) {
+      data = normalizeData(remote);
       saveLocal(data);
       setSyncText('Synced');
       setSyncColor('green');
       renderAll();
-    }).catch(function() {
-      setSyncText('Offline');
+    }).catch(function () {
+      setSyncText('Offline (local copy)');
       setSyncColor('red');
       renderAll();
     });
   } else {
+    setSyncText('Local');
     renderAll();
   }
 }
@@ -307,206 +545,410 @@ function initData() {
 // ===================================================================
 var projListEl = document.getElementById('proj-list');
 var teamListEl = document.getElementById('team-list');
-var teamHeadEl = document.getElementById('team-head');
 var taskListEl = document.getElementById('task-list');
-var taskHeadEl = document.getElementById('task-head');
+var sheetEmptyEl = document.getElementById('sheet-empty');
+var sheetTableEl = document.getElementById('sheet-table');
 
-function renderAll() { renderProjects(); renderTeams(); renderTasks(); }
-
-function getProjectTeams(proj) {
-  if (!proj || !proj.teams) return [];
-  return data.teams.filter(function(t) { return proj.teams.indexOf(t.id) >= 0; });
+function renderAll() {
+  if (selProj === null && data.projects.length > 0) selProj = data.projects[0].id;
+  renderProjects();
+  renderTeams();
+  renderContent();
 }
 
+function currentProject() {
+  for (var i = 0; i < data.projects.length; i++) {
+    if (data.projects[i].id === selProj) return data.projects[i];
+  }
+  return null;
+}
+
+function findTask(tid) {
+  var proj = currentProject();
+  if (!proj) return null;
+  for (var i = 0; i < proj.tasks.length; i++) {
+    if (proj.tasks[i].id === tid) return proj.tasks[i];
+  }
+  return null;
+}
+
+function teamById(id) {
+  for (var i = 0; i < data.teams.length; i++) {
+    if (data.teams[i].id === id) return data.teams[i];
+  }
+  return null;
+}
+function teamName(id) { var t = teamById(id); return t ? t.name : ''; }
+
 // ===================================================================
+function projectTotals(proj) {
+  var t = { total: 0, done: 0, active: 0, overdue: 0, today: 0, week: 0, next: null };
+  if (!proj) return t;
+  proj.tasks.forEach(function (task) {
+    if (task.archived) return;
+    t.total++;
+    if (task.status === 'Done') { t.done++; return; }
+    t.active++;
+    var di = dueInfo(task);
+    if (di.key === 'overdue') t.overdue++;
+    else if (di.key === 'today') t.today++;
+    else if (di.key === 'soon') t.week++;
+    if (di.ms !== null && di.key !== 'overdue' && (!t.next || di.ms < t.next.ms)) t.next = di;
+  });
+  return t;
+}
+
 function renderProjects() {
   projListEl.innerHTML = '';
-  data.projects.forEach(function(p) {
+  if (data.projects.length === 0) {
+    projListEl.innerHTML = '<div class="empty">No projects yet.<br>Officers can add one.</div>';
+    document.getElementById('proj-note').textContent = '0 active';
+    return;
+  }
+
+  var activeCount = 0;
+  data.projects.forEach(function (p) {
+    var totals = projectTotals(p);
+    if (totals.active > 0) activeCount++;
+
+    var pct = totals.total ? Math.round((totals.done / totals.total) * 100) : 0;
+
     var div = document.createElement('div');
     div.className = 'proj-item' + (p.id === selProj ? ' active' : '');
-    div.textContent = p.name;
-    div.addEventListener('click', function() { selectProject(p.id); });
+    div.dataset.pid = p.id;
+
+    var meta = totals.total === 0 ? 'no tasks' : totals.done + '/' + totals.total + ' done';
+    var late = totals.overdue > 0 ? ' <span class="late">' + totals.overdue + ' overdue</span>' : '';
+
+    div.innerHTML =
+      '<div class="proj-row"><span class="proj-name">' + esc(p.name) + '</span>' +
+      '<span class="proj-count">' + (totals.total ? totals.done + '/' + totals.total : '-') + '</span></div>' +
+      '<div class="proj-bar"><i style="width:' + pct + '%"></i></div>' +
+      '<div class="proj-meta">' + meta + late + '</div>';
+
+    div.addEventListener('click', function () { selectProject(p.id); });
     projListEl.appendChild(div);
   });
-  if (data.projects.length === 0) projListEl.innerHTML = '<div class="empty">No projects</div>';
+
+  document.getElementById('proj-note').textContent = activeCount + ' active';
 }
 
 function selectProject(id) {
   selProj = id; selTeam = null; selTask = null;
+  filterStatus = null; filterPerson = ''; searchQuery = '';
+  var sb = document.getElementById('search-box');
+  if (sb) sb.value = '';
   renderAll();
 }
 
 // ===================================================================
+function getProjectTeams(proj) {
+  if (!proj || !proj.teams) return [];
+  return data.teams.filter(function (t) { return proj.teams.indexOf(t.id) >= 0; });
+}
+
 function renderTeams() {
-  var proj = null;
-  for (var i = 0; i < data.projects.length; i++) {
-    if (data.projects[i].id === selProj) { proj = data.projects[i]; break; }
-  }
+  var proj = currentProject();
+  var noteEl = document.getElementById('team-note');
+  teamListEl.innerHTML = '';
+
   if (!proj) {
-    teamHeadEl.textContent = 'Teams';
+    noteEl.textContent = '';
     teamListEl.innerHTML = '<div class="empty">Select a project</div>';
     return;
   }
-  teamHeadEl.textContent = 'Teams';
-  teamListEl.innerHTML = '';
 
   var pTeams = getProjectTeams(proj);
-  pTeams.forEach(function(t) {
+  noteEl.textContent = pTeams.length + ' on this project';
+
+  pTeams.forEach(function (t) {
     var div = document.createElement('div');
     div.className = 'team-item' + (t.id === selTeam ? ' active' : '');
-    div.innerHTML = '<div style="font-weight:bold;margin-bottom:2px">' + esc(t.name) + '</div>';
-    t.members.forEach(function(m) {
-      div.innerHTML += '<span class="pastel-tag" style="background:' + pastelFor(m) + ';color:#000000">' + esc(m) + '</span> ';
+    var html = '<div class="team-name">' + esc(t.name) + '</div><div class="team-tags">';
+    t.members.forEach(function (m) {
+      html += '<span class="pastel-tag" style="background:' + pastelFor(m) + '">' + esc(m) + '</span>';
     });
-    div.addEventListener('click', function() { selTeam = t.id; renderTeams(); renderTasks(); });
+    html += '</div>';
+    div.innerHTML = html;
+    div.addEventListener('click', function () { selTeam = (selTeam === t.id ? null : t.id); renderTeams(); });
     teamListEl.appendChild(div);
   });
-  if (pTeams.length === 0) teamListEl.innerHTML = '<div class="empty">No teams</div>';
+
+  if (pTeams.length === 0) {
+    teamListEl.innerHTML = '<div class="empty">No teams attached.' +
+      (userRole === 'officer' ? '<br>Use Attach to link a team.' : '') + '</div>';
+  }
 }
 
 // ===================================================================
-function renderTasks() {
-  var proj = null;
-  for (var i = 0; i < data.projects.length; i++) {
-    if (data.projects[i].id === selProj) { proj = data.projects[i]; break; }
-  }
+function renderContent() {
+  var proj = currentProject();
+  var headEl = document.getElementById('task-head');
+  var subEl = document.getElementById('project-sub');
+
   if (!proj) {
-    taskHeadEl.textContent = 'Tasks';
-    taskListEl.innerHTML = '<div class="empty">Select a project</div>';
+    headEl.textContent = 'No project selected';
+    subEl.textContent = 'Pick a project on the left to see its task sheet';
+    renderChips();
+    renderStats();
+    renderTasks();
     return;
   }
-  taskHeadEl.textContent = 'Tasks -- ' + proj.name;
-  taskListEl.innerHTML = '';
 
-  var tasksToShow = proj.tasks.filter(function(t) {
+  headEl.textContent = proj.name;
+  var totals = projectTotals(proj);
+  var pct = totals.total ? Math.round((totals.done / totals.total) * 100) : 0;
+  subEl.innerHTML = totals.total + ' tasks | ' + totals.done + ' done (' + pct + '%)' +
+    (totals.overdue ? ' | <span class="late">' + totals.overdue + ' overdue</span>' : '');
+
+  renderChips();
+  renderStats();
+  renderTasks();
+}
+
+function renderChips() {
+  var proj = currentProject();
+  var wrap = document.getElementById('status-chips');
+  var counts = { all: 0 };
+  STATUSES.forEach(function (s) { counts[s] = 0; });
+
+  if (proj) {
+    proj.tasks.forEach(function (t) {
+      if (showArchived ? t.archived !== true : t.archived === true) return;
+      counts.all++;
+      if (counts[t.status] === undefined) counts[t.status] = 0;
+      counts[t.status]++;
+    });
+  }
+
+  var html = '<span class="chip' + (filterStatus === null ? ' on' : '') + '" data-f="all">All <span class="chip-n">' + counts.all + '</span></span>';
+  STATUSES.forEach(function (s) {
+    var n = counts[s] || 0;
+    html += '<span class="chip' + (filterStatus === s ? ' on' : '') + '" data-f="' + s + '">' + s +
+      ' <span class="chip-n">' + n + '</span></span>';
+  });
+  wrap.innerHTML = html;
+
+  wrap.querySelectorAll('.chip').forEach(function (el) {
+    el.addEventListener('click', function () {
+      filterStatus = (this.dataset.f === 'all') ? null : this.dataset.f;
+      renderChips(); renderTasks();
+    });
+  });
+
+  // assignee filter options
+  var sel = document.getElementById('assignee-filter');
+  var people = proj ? getProjectPeople(proj.id) : [];
+  var opts = '<option value="">All people</option>';
+  people.forEach(function (p) {
+    opts += '<option value="' + esc(p) + '">' + esc(p) + '</option>';
+  });
+  sel.innerHTML = opts;
+  sel.value = filterPerson;
+}
+
+function renderStats() {
+  var proj = currentProject();
+  var t = projectTotals(proj);
+  var nextLabel = '--';
+  if (t.next && t.next.date) {
+    nextLabel = MONTHS[t.next.date.getMonth()] + ' ' + t.next.date.getDate() +
+      (proj && t.next.date ? ' ' + fmtTime(pad2(t.next.date.getHours()) + ':' + pad2(t.next.date.getMinutes())) : '');
+  }
+
+  var html = '';
+  html += '<div class="stat total"><span class="stat-label">TOTAL</span><span class="stat-value">' + t.total + '</span></div>';
+  html += '<div class="stat done"><span class="stat-label">DONE</span><span class="stat-value">' + t.done + '</span></div>';
+  html += '<div class="stat active"><span class="stat-label">ACTIVE</span><span class="stat-value">' + t.active + '</span></div>';
+  html += '<div class="stat overdue' + (t.overdue > 0 ? ' hot' : '') + '"><span class="stat-label">OVERDUE</span><span class="stat-value">' + t.overdue + '</span></div>';
+  html += '<div class="stat today"><span class="stat-label">DUE TODAY</span><span class="stat-value">' + t.today + '</span></div>';
+  html += '<div class="stat week"><span class="stat-label">NEXT 7 DAYS</span><span class="stat-value">' + t.week + '</span></div>';
+  html += '<div class="stat next"><span class="stat-label">NEXT DEADLINE</span><span class="stat-value small">' + nextLabel + '</span></div>';
+  document.getElementById('stats-row').innerHTML = html;
+}
+
+// ===================================================================
+function sortTasks(arr) {
+  arr.sort(function (a, b) {
+    var r = 0;
+    if (sortKey === 'title') {
+      r = a.title.toLowerCase() < b.title.toLowerCase() ? -1 : (a.title.toLowerCase() > b.title.toLowerCase() ? 1 : 0);
+    } else if (sortKey === 'status') {
+      r = (STATUS_ORDER[a.status] || 9) - (STATUS_ORDER[b.status] || 9);
+    } else if (sortKey === 'assigned') {
+      var pa = (a.persons && a.persons.length) ? a.persons.join(', ') : '~';
+      var pb = (b.persons && b.persons.length) ? b.persons.join(', ') : '~';
+      r = pa.toLowerCase() < pb.toLowerCase() ? -1 : (pa.toLowerCase() > pb.toLowerCase() ? 1 : 0);
+    } else {
+      var da = parseDue(a), db = parseDue(b);
+      if (!da && !db) r = a.title.toLowerCase() < b.title.toLowerCase() ? -1 : 1;
+      else if (!da) r = 1;
+      else if (!db) r = -1;
+      else r = da.getTime() - db.getTime();
+    }
+    if (r === 0) r = a.title.toLowerCase() < b.title.toLowerCase() ? -1 : 1;
+    return r * sortDir;
+  });
+  return arr;
+}
+
+function visibleTasks() {
+  var proj = currentProject();
+  if (!proj) return [];
+  var arr = proj.tasks.filter(function (t) {
     return showArchived ? (t.archived === true) : (t.archived !== true);
   });
-
-  tasksToShow.forEach(function(t) {
-    var div = document.createElement('div');
-    div.className = 'task-item' + (t.id === selTask ? ' active' : '');
-    div.dataset.id = t.id;
-
-    // Build tags HTML (team + persons)
-    var tagsHtml = '';
-    if (t.team) {
-      for (var k = 0; k < data.teams.length; k++) {
-        if (data.teams[k].id === t.team) {
-          tagsHtml += '<span class="pastel-tag" style="background:' + pastelFor(data.teams[k].name) + ';color:#000000">' + esc(data.teams[k].name) + '</span>';
-          break;
-        }
-      }
-    }
-    if (t.persons) {
-      t.persons.forEach(function(p) {
-        tagsHtml += '<span class="pastel-tag" style="background:' + pastelFor(p) + ';color:#000000">' + esc(p) + '</span>';
-      });
-    }
-
-    var isOpen = (t.id === selTask && t.desc) ? ' open' : '';
-
-    div.innerHTML =
-      '<div class="task-top">' +
-        '<span class="task-title">' + esc(t.title) + '</span>' +
-        '<span class="task-tags">' + tagsHtml + '</span>' +
-        '<select class="task-status-select ' + statusClass(t.status) + '" data-tid="' + t.id + '">' +
-          statusOptions(t.status) +
-        '</select>' +
-      '</div>' +
-      '<div class="task-desc-wrap' + isOpen + '" data-tid="' + t.id + '">' +
-        '<textarea class="task-desc-text" data-tid="' + t.id + '" placeholder="Description...">' + esc(t.desc || '') + '</textarea>' +
-      '</div>';
-
-    div.addEventListener('click', function(e) {
-      if (e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
-      selTask = (selTask === t.id) ? null : t.id;
-      renderTasks();
+  if (filterStatus) arr = arr.filter(function (t) { return t.status === filterStatus; });
+  if (filterPerson) arr = arr.filter(function (t) { return (t.persons || []).indexOf(filterPerson) >= 0; });
+  var q = searchQuery.trim().toLowerCase();
+  if (q) {
+    arr = arr.filter(function (t) {
+      var hay = (t.title || '') + ' ' + (t.desc || '') + ' ' + (t.persons || []).join(' ') + ' ' + teamName(t.team);
+      return hay.toLowerCase().indexOf(q) >= 0;
     });
-
-    taskListEl.appendChild(div);
-  });
-
-  // Bind status dropdowns
-  document.querySelectorAll('.task-status-select').forEach(function(el) {
-    el.addEventListener('change', function(e) {
-      e.stopPropagation();
-      var tid = parseInt(this.dataset.tid);
-      for (var i = 0; i < data.projects.length; i++) {
-        if (data.projects[i].id === selProj) {
-          for (var j = 0; j < data.projects[i].tasks.length; j++) {
-            if (data.projects[i].tasks[j].id === tid) {
-              data.projects[i].tasks[j].status = this.value;
-              this.className = 'task-status-select ' + statusClass(this.value);
-              persist();
-
-              // If set to Done, prompt to archive after 1 second
-              if (this.value === 'Done') {
-                var task = data.projects[i].tasks[j];
-                setTimeout(function() {
-                  if (confirm('Archive "' + task.title + '"?')) {
-                    task.archived = true;
-                    persist();
-                    renderTasks();
-                  }
-                }, 1000);
-              }
-              return;
-            }
-          }
-        }
-      }
-    });
-  });
-
-  // Bind description textareas
-  document.querySelectorAll('.task-desc-text').forEach(function(el) {
-    el.addEventListener('change', function(e) {
-      e.stopPropagation();
-      var tid = parseInt(this.dataset.tid);
-      for (var i = 0; i < data.projects.length; i++) {
-        if (data.projects[i].id === selProj) {
-          for (var j = 0; j < data.projects[i].tasks.length; j++) {
-            if (data.projects[i].tasks[j].id === tid) {
-              data.projects[i].tasks[j].desc = this.value;
-              persist();
-              return;
-            }
-          }
-        }
-      }
-    });
-  });
-
-  if (tasksToShow.length === 0) {
-    taskListEl.innerHTML = '<div class="empty">' + (showArchived ? 'No finished tasks' : 'No tasks') + '</div>';
   }
+  return sortTasks(arr.slice());
+}
+
+function renderTasks() {
+  var proj = currentProject();
+
+  ['title', 'status', 'assigned', 'due'].forEach(function (k) {
+    var el = document.getElementById('mark-' + k);
+    if (el) el.textContent = (sortKey === k) ? (sortDir === 1 ? '^' : 'v') : '';
+  });
+
+  if (!proj) {
+    sheetTableEl.style.display = 'none';
+    sheetEmptyEl.style.display = 'flex';
+    sheetEmptyEl.innerHTML = 'Select a project to open its task sheet';
+    document.getElementById('sheet-count').textContent = '0 tasks';
+    return;
+  }
+
+  var list = visibleTasks();
+
+  if (list.length === 0) {
+    var hasAny = proj.tasks.some(function (t) { return showArchived ? t.archived === true : t.archived !== true; });
+    sheetTableEl.style.display = 'none';
+    sheetEmptyEl.style.display = 'flex';
+    if (!hasAny) {
+      sheetEmptyEl.innerHTML = showArchived
+        ? 'No finished tasks yet'
+        : 'No tasks on this project yet.<br>Use + Add Task to create the first one.';
+    } else {
+      sheetEmptyEl.innerHTML = 'No tasks match the current filters.<br>Clear the search or status filter.';
+    }
+    document.getElementById('sheet-count').textContent = 'Showing 0 of ' + proj.tasks.length + ' tasks';
+    return;
+  }
+
+  sheetTableEl.style.display = 'table';
+  sheetEmptyEl.style.display = 'none';
+
+  var html = '';
+  list.forEach(function (t, idx) {
+    var di = dueInfo(t);
+    var stCls = statusClass(t.status);
+    var duCls = 'du-' + di.key;
+    var isSel = (t.id === selTask);
+    var dueLabel = di.label;
+    if (di.key === 'none') dueLabel = 'NO DATE SET';
+    if (di.key === 'done') dueLabel = 'COMPLETED';
+
+    var tags = '';
+    if (t.persons && t.persons.length) {
+      t.persons.slice(0, 3).forEach(function (p) {
+        tags += '<span class="pastel-tag" style="background:' + pastelFor(p) + '">' + esc(p) + '</span>';
+      });
+      if (t.persons.length > 3) {
+        tags += '<span class="pastel-tag" style="background:#333333;color:#CC9700">+' + (t.persons.length - 3) + '</span>';
+      }
+    } else {
+      tags = '<span class="none-mark">--</span>';
+    }
+
+    var teamHtml = t.team ? '<span class="team-pill">' + esc(teamName(t.team) || 'team ' + t.team) + '</span>' : '<span class="none-mark">--</span>';
+
+    var sub = '';
+    if (t.desc) {
+      sub = '<div class="task-sub">' + esc(t.desc.length > 90 ? t.desc.slice(0, 90) + '...' : t.desc) + '</div>';
+    }
+
+    html += '<tr class="sheet-row' + (isSel ? ' selected' : '') + (t.archived ? ' archived' : '') + '" data-tid="' + t.id + '">' +
+      '<td class="col-num">' + (idx + 1) + '</td>' +
+      '<td class="col-task"><div class="task-title">' + esc(t.title) + '</div>' + sub + '</td>' +
+      '<td class="col-status ' + stCls + '">' +
+        '<select class="status-sel" data-tid="' + t.id + '">' + statusOptions(t.status) + '</select>' +
+      '</td>' +
+      '<td class="col-assigned">' + tags + '</td>' +
+      '<td class="col-team">' + teamHtml + '</td>' +
+      '<td class="col-due ' + duCls + '">' +
+        '<div class="due-row">' +
+          '<input class="due-input" type="date" data-tid="' + t.id + '" value="' + esc(t.dueDate || '') + '">' +
+          '<input class="time-input" type="time" data-tid="' + t.id + '" value="' + esc(t.dueTime || '') + '">' +
+        '</div>' +
+        '<span class="due-note">' + esc(dueLabel) + '</span>' +
+      '</td>' +
+    '</tr>';
+
+    if (isSel) {
+      var meta = 'DUE <b>' + escapeHtml(di.date ? fmtDate(di.date) + (t.dueTime ? ' at ' + fmtTime(t.dueTime) : '') : 'not set') + '</b>' +
+        ' | ASSIGNED <b>' + escapeHtml((t.persons && t.persons.length) ? t.persons.join(', ') : 'nobody') + '</b>' +
+        ' | TEAM <b>' + escapeHtml(teamName(t.team) || 'none') + '</b>' +
+        ' | STATUS <b>' + escapeHtml(t.status) + '</b>';
+
+      html += '<tr class="detail-row"><td colspan="6">' +
+        '<div class="detail-meta">' + meta + '</div>' +
+        '<textarea class="desc-edit" rows="2" data-tid="' + t.id + '" placeholder="Add a description or notes...">' + esc(t.desc || '') + '</textarea>' +
+      '</td></tr>';
+    }
+  });
+
+  taskListEl.innerHTML = html;
+
+  var totalShown = list.length;
+  var totalAll = proj.tasks.filter(function (t) { return showArchived ? t.archived === true : t.archived !== true; }).length;
+  document.getElementById('sheet-count').textContent = 'Showing ' + totalShown + ' of ' + totalAll + ' ' +
+    (showArchived ? 'finished tasks' : 'active tasks') + ' | sorted by ' +
+    (sortKey === 'due' ? 'due date' : sortKey);
 }
 
 function statusOptions(current) {
   var opts = '';
-  STATUSES.forEach(function(s) { opts += '<option value="' + s + '"' + (s === current ? ' selected' : '') + '>' + s + '</option>'; });
+  STATUSES.forEach(function (s) {
+    opts += '<option value="' + s + '"' + (s === current ? ' selected' : '') + '>' + s + '</option>';
+  });
   return opts;
 }
 
-function esc(str) { var d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
-function nextId(items) { var max = 0; for (var i = 0; i < items.length; i++) { if (items[i].id > max) max = items[i].id; } return max + 1; }
-function persist() { saveLocal(data); setSyncText('Unsaved'); setSyncColor('red'); }
+function escapeHtml(s) {
+  return String(s === null || s === undefined ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+function esc(str) { return escapeHtml(str); }
+
+function nextId(items) {
+  var max = 0;
+  for (var i = 0; i < items.length; i++) { if (items[i].id > max) max = items[i].id; }
+  return max + 1;
+}
+function persist() { saveLocal(data); setSyncText('Unsaved changes'); setSyncColor('red'); }
 
 // Get all unique person names from a project's teams and tasks
 function getProjectPeople(projId) {
   var names = {};
-  // Get names from tasks
   for (var i = 0; i < data.projects.length; i++) {
     if (data.projects[i].id === projId) {
-      data.projects[i].tasks.forEach(function(t) {
-        if (t.persons) t.persons.forEach(function(p) { names[p] = true; });
+      data.projects[i].tasks.forEach(function (t) {
+        if (t.persons) t.persons.forEach(function (p) { names[p] = true; });
       });
-      // Get names from teams assigned to this project
       if (data.projects[i].teams) {
-        data.projects[i].teams.forEach(function(tid) {
+        data.projects[i].teams.forEach(function (tid) {
           for (var j = 0; j < data.teams.length; j++) {
             if (data.teams[j].id === tid) {
-              data.teams[j].members.forEach(function(m) { names[m] = true; });
+              data.teams[j].members.forEach(function (m) { names[m] = true; });
             }
           }
         });
@@ -514,128 +956,305 @@ function getProjectPeople(projId) {
       break;
     }
   }
-  return Object.keys(names).sort();
+  var out = [];
+  for (var k in names) if (Object.prototype.hasOwnProperty.call(names, k)) out.push(k);
+  return out.sort();
 }
 
-// Render a member picker inside a modal
-// containerId: element id to render into
-// members: current array of member names
-// availPeople: array of available names to suggest
-// onChange: called when members change
-var _memberPickers = {};
-function renderMemberPicker(modalKey, containerId, availInputId, addBtnId, members, availPeople, onChange) {
-  _memberPickers[modalKey] = { members: members, onChange: onChange };
-  renderMembersList(modalKey, containerId, availInputId, addBtnId, availPeople);
+// ===================================================================
+//  Sheet interactions (event delegation)
+// ===================================================================
+taskListEl.addEventListener('click', function (e) {
+  if (e.target.closest('input, select, textarea, button')) return;
+  var tr = e.target.closest('tr.sheet-row');
+  if (!tr) return;
+  var tid = parseInt(tr.dataset.tid, 10);
+  selTask = (selTask === tid) ? null : tid;
+  renderTasks();
+});
+
+taskListEl.addEventListener('dblclick', function (e) {
+  if (userRole !== 'officer') return;
+  if (e.target.closest('input, select, textarea, button')) return;
+  var tr = e.target.closest('tr.sheet-row');
+  if (!tr) return;
+  selTask = parseInt(tr.dataset.tid, 10);
+  openTaskModal('edit', selTask);
+});
+
+taskListEl.addEventListener('change', function (e) {
+  var el = e.target;
+  var tid = parseInt(el.dataset.tid, 10);
+  var task = findTask(tid);
+  if (!task) return;
+
+  if (el.classList.contains('status-sel')) {
+    task.status = el.value;
+    persist();
+    renderChips(); renderStats(); renderProjects();
+    if (task.status === 'Done') {
+      var target = task;
+      setTimeout(function () {
+        if (target.archived) return;
+        if (confirm('Archive "' + target.title + '"?')) {
+          target.archived = true;
+          persist();
+          renderAll();
+        } else {
+          renderTasks();
+        }
+      }, 1000);
+    } else {
+      renderTasks();
+    }
+    return;
+  }
+
+  if (el.classList.contains('due-input')) {
+    task.dueDate = el.value || '';
+    if (!task.dueDate) task.dueTime = '';
+    persist();
+    renderTasks(); renderStats(); renderProjects(); renderContent();
+    return;
+  }
+
+  if (el.classList.contains('time-input')) {
+    task.dueTime = el.value || '';
+    persist();
+    renderTasks(); renderStats(); renderProjects();
+    return;
+  }
+
+  if (el.classList.contains('desc-edit')) {
+    task.desc = el.value;
+    persist();
+    return;
+  }
+});
+
+document.getElementById('search-box').addEventListener('input', function () {
+  searchQuery = this.value;
+  renderTasks();
+});
+
+document.getElementById('assignee-filter').addEventListener('change', function () {
+  filterPerson = this.value;
+  renderTasks();
+});
+
+document.getElementById('task-toggle-archive').addEventListener('click', function () {
+  showArchived = !showArchived;
+  this.textContent = showArchived ? 'Show Current' : 'Show Finished';
+  this.classList.toggle('on', showArchived);
+  selTask = null;
+  filterStatus = null;
+  renderChips(); renderTasks();
+});
+
+// Header sorting
+document.querySelectorAll('table.sheet th.sortable').forEach(function (th) {
+  th.addEventListener('click', function () {
+    var k = this.dataset.sort;
+    if (sortKey === k) sortDir = -sortDir;
+    else { sortKey = k; sortDir = 1; }
+    renderTasks();
+  });
+});
+
+// ===================================================================
+//  CSV export
+// ===================================================================
+function csvCell(v) {
+  var s = String(v === null || v === undefined ? '' : v);
+  if (/[",\r\n]/.test(s)) s = '"' + s.replace(/"/g, '""') + '"';
+  return s;
 }
-function renderMembersList(modalKey, containerId, availInputId, addBtnId, availPeople) {
+
+document.getElementById('export-csv').addEventListener('click', function () {
+  var proj = currentProject();
+  if (!proj) { alert('Select a project first.'); return; }
+  var rows = [['#', 'Task', 'Status', 'Assigned', 'Team', 'Due Date', 'Due Time', 'Due State', 'Description']];
+  visibleTasks().forEach(function (t, i) {
+    var di = dueInfo(t);
+    rows.push([
+      i + 1, t.title, t.status, (t.persons || []).join('; '), teamName(t.team),
+      t.dueDate || '', t.dueTime || '', di.label, t.desc || ''
+    ]);
+  });
+  var csv = rows.map(function (r) { return r.map(csvCell).join(','); }).join('\r\n');
+  var blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = proj.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '-tasks.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+});
+
+// ===================================================================
+//  Member picker (teams + task people)
+// ===================================================================
+var _memberPickers = {};
+// Explicit ids for both containers so no string pattern guessing is involved.
+// containerId = chip list, gridId = "add from project" button grid.
+function renderMemberPicker(modalKey, containerId, gridId, newInputId, addBtnId, members, availPeople, onChange) {
+  _memberPickers[modalKey] = { members: members, onChange: onChange };
+  renderMembersList(modalKey, containerId, gridId, availPeople);
+}
+function renderMembersList(modalKey, containerId, gridId, availPeople) {
   var state = _memberPickers[modalKey];
   if (!state) return;
-  var members = state.members;
+  var members = state.members || [];
 
-  // Render current members
   var listEl = document.getElementById(containerId);
+  var grid = document.getElementById(gridId);
+  if (!listEl || !grid) return;
+
   listEl.innerHTML = '';
-  members.forEach(function(m, idx) {
+  members.forEach(function (m, idx) {
     var tag = document.createElement('span');
     tag.className = 'pastel-tag member-tag';
     tag.style.background = pastelFor(m);
     tag.style.color = '#000000';
     tag.innerHTML = esc(m) + ' <span class="remove" data-idx="' + idx + '">X</span>';
-    tag.querySelector('.remove').addEventListener('click', function(e) {
+    tag.querySelector('.remove').addEventListener('click', function (e) {
       e.stopPropagation();
-      members.splice(parseInt(this.dataset.idx), 1);
-      renderMembersList(modalKey, containerId, availInputId, addBtnId, availPeople);
+      members.splice(parseInt(this.dataset.idx, 10), 1);
+      renderMembersList(modalKey, containerId, gridId, availPeople);
       if (state.onChange) state.onChange(members);
     });
     listEl.appendChild(tag);
   });
 
-  // Render available people (not already in members)
-  var availEl = document.getElementById(availInputId.replace('-new-member', '-avail'));
-  if (!availEl) availEl = document.getElementById(availInputId);
-  // Find the avail grid
-  var gridId = containerId.replace('-members-list', '-avail');
-  var grid = document.getElementById(gridId);
-  if (grid) {
-    grid.innerHTML = '';
-    availPeople.forEach(function(name) {
-      if (members.indexOf(name) >= 0) return;
-      var btn = document.createElement('button');
-      btn.textContent = name;
-      btn.addEventListener('click', function() {
-        members.push(name);
-        renderMembersList(modalKey, containerId, availInputId, addBtnId, availPeople);
-        if (state.onChange) state.onChange(members);
-      });
-      grid.appendChild(btn);
+  grid.innerHTML = '';
+  availPeople.forEach(function (name) {
+    if (members.indexOf(name) >= 0) return;
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = name;
+    btn.addEventListener('click', function () {
+      members.push(name);
+      renderMembersList(modalKey, containerId, gridId, availPeople);
+      if (state.onChange) state.onChange(members);
     });
-  }
+    grid.appendChild(btn);
+  });
 }
 
 // ===================================================================
-syncBtn.addEventListener('click', function() {
-  if (typeof API_TOKEN=== 'undefined' || !API_TOKEN) { setSyncText('No token'); return; }
-  setSyncText('Syncing...');
-  setSyncColor('yellow');
-  pushToRepo(data).then(function() { setSyncText('Synced'); setSyncColor('green'); })
-    .catch(function(e) { setSyncText('Error: ' + e.message); setSyncColor('red'); });
+//  Simple text modal
+// ===================================================================
+var textModalResolve = null;
+function askText(title, label, value) {
+  return new Promise(function (resolve) {
+    textModalResolve = resolve;
+    document.getElementById('text-modal-title').textContent = title;
+    document.getElementById('text-modal-label').textContent = label;
+    var input = document.getElementById('text-modal-input');
+    input.value = value || '';
+    document.getElementById('text-modal-overlay').style.display = 'flex';
+    input.focus();
+    input.select();
+  });
+}
+function closeTextModal(result) {
+  document.getElementById('text-modal-overlay').style.display = 'none';
+  if (textModalResolve) { var r = textModalResolve; textModalResolve = null; r(result); }
+}
+document.getElementById('text-modal-ok').addEventListener('click', function () {
+  var v = document.getElementById('text-modal-input').value.trim();
+  closeTextModal(v || null);
+});
+document.getElementById('text-modal-cancel').addEventListener('click', function () { closeTextModal(null); });
+document.getElementById('text-modal-input').addEventListener('keydown', function (e) {
+  if (e.key === 'Enter') { e.preventDefault(); document.getElementById('text-modal-ok').click(); }
+  if (e.key === 'Escape') closeTextModal(null);
 });
 
 // ===================================================================
-document.getElementById('proj-add').addEventListener('click', function() {
-  var name = prompt('Project name:');
-  if (name && name.trim()) {
-    data.projects.push({ id: nextId(data.projects), name: name.trim(), teams: [], tasks: [] });
-    persist();
-    selProj = data.projects[data.projects.length - 1].id;
-    renderAll();
-  }
+//  Sync
+// ===================================================================
+syncBtn.addEventListener('click', function () {
+  if (typeof API_TOKEN === 'undefined' || !API_TOKEN) { setSyncText('No sync token'); return; }
+  setSyncText('Syncing...');
+  setSyncColor('yellow');
+  pushToRepo(data).then(function () {
+    setSyncText('Synced');
+    setSyncColor('green');
+  }).catch(function (e) {
+    setSyncText('Error: ' + e.message);
+    setSyncColor('red');
+  });
 });
 
-document.getElementById('proj-del').addEventListener('click', function() {
-  if (selProj === null) return;
-  var found = null;
-  for (var i = 0; i < data.projects.length; i++) { if (data.projects[i].id === selProj) { found = data.projects[i]; break; } }
-  if (!found) return;
-  if (!confirm('Delete "' + found.name + '" and all its teams and tasks?')) return;
-  data.projects = data.projects.filter(function(p) { return p.id !== selProj; });
+// ===================================================================
+//  Projects
+// ===================================================================
+document.getElementById('proj-add').addEventListener('click', function () {
+  askText('New Project', 'Project name', '').then(function (name) {
+    if (!name) return;
+    var p = { id: nextId(data.projects), name: name, teams: [], tasks: [] };
+    data.projects.push(p);
+    persist();
+    selProj = p.id; selTeam = null; selTask = null;
+    renderAll();
+  });
+});
+
+document.getElementById('proj-rename').addEventListener('click', function () {
+  var proj = currentProject();
+  if (!proj) { alert('Select a project first.'); return; }
+  askText('Rename Project', 'Project name', proj.name).then(function (name) {
+    if (!name) return;
+    proj.name = name;
+    persist();
+    renderAll();
+  });
+});
+
+document.getElementById('proj-del').addEventListener('click', function () {
+  var proj = currentProject();
+  if (!proj) { alert('Select a project first.'); return; }
+  if (!confirm('Delete "' + proj.name + '" and all its tasks?')) return;
+  data.projects = data.projects.filter(function (p) { return p.id !== proj.id; });
   persist();
   selProj = data.projects.length > 0 ? data.projects[0].id : null;
+  selTeam = null; selTask = null;
   renderAll();
 });
 
 // ===================================================================
-// Team modals
+//  Teams
 // ===================================================================
-document.getElementById('team-add').addEventListener('click', function() {
+document.getElementById('team-add').addEventListener('click', function () {
   if (selProj === null) { alert('Select a project first.'); return; }
   document.getElementById('team-modal-name').value = '';
   var members = [];
   var availPeople = getProjectPeople(selProj);
-  renderMemberPicker('add', 'team-modal-members-list', 'team-modal-new-member', 'team-modal-add-member', members, availPeople, function(m) { members = m; });
+  renderMemberPicker('add', 'team-modal-members-list', 'team-modal-avail', 'team-modal-new-member', 'team-modal-add-member', members, availPeople, function (m) { members = m; });
   document.getElementById('team-modal-overlay').style.display = 'flex';
   document.getElementById('team-modal-name').focus();
 });
 
-document.getElementById('team-modal-add-member').addEventListener('click', function() {
+document.getElementById('team-modal-add-member').addEventListener('click', function () {
   var input = document.getElementById('team-modal-new-member');
   var name = input.value.trim();
   if (!name) return;
   var state = _memberPickers['add'];
   if (state && state.members.indexOf(name) < 0) {
     state.members.push(name);
-    var availPeople = getProjectPeople(selProj);
-    renderMembersList('add', 'team-modal-members-list', 'team-modal-new-member', 'team-modal-add-member', availPeople);
+    renderMembersList('add', 'team-modal-members-list', 'team-modal-avail', getProjectPeople(selProj));
   }
   input.value = '';
   input.focus();
 });
 
-document.getElementById('team-modal-new-member').addEventListener('keydown', function(e) {
+document.getElementById('team-modal-new-member').addEventListener('keydown', function (e) {
   if (e.key === 'Enter') document.getElementById('team-modal-add-member').click();
 });
 
-document.getElementById('team-modal-ok').addEventListener('click', function() {
+document.getElementById('team-modal-ok').addEventListener('click', function () {
   var name = document.getElementById('team-modal-name').value.trim();
   if (!name) { alert('Team name required.'); return; }
   var state = _memberPickers['add'];
@@ -643,172 +1262,261 @@ document.getElementById('team-modal-ok').addEventListener('click', function() {
   if (members.length === 0) { alert('At least one member required.'); return; }
   var newTeam = { id: nextId(data.teams), name: name, members: members.slice() };
   data.teams.push(newTeam);
-  for (var i = 0; i < data.projects.length; i++) {
-    if (data.projects[i].id === selProj) {
-      if (!data.projects[i].teams) data.projects[i].teams = [];
-      if (data.projects[i].teams.indexOf(newTeam.id) < 0) data.projects[i].teams.push(newTeam.id);
-      break;
-    }
+  var proj = currentProject();
+  if (proj) {
+    if (!proj.teams) proj.teams = [];
+    if (proj.teams.indexOf(newTeam.id) < 0) proj.teams.push(newTeam.id);
   }
   persist();
   document.getElementById('team-modal-overlay').style.display = 'none';
   renderAll();
 });
 
-document.getElementById('team-modal-cancel').addEventListener('click', function() {
+document.getElementById('team-modal-cancel').addEventListener('click', function () {
   document.getElementById('team-modal-overlay').style.display = 'none';
 });
 
-document.getElementById('team-edit').addEventListener('click', function() {
+document.getElementById('team-edit').addEventListener('click', function () {
   if (selTeam === null) { alert('Select a team first.'); return; }
-  var team = null;
-  for (var i = 0; i < data.teams.length; i++) { if (data.teams[i].id === selTeam) { team = data.teams[i]; break; } }
+  var team = teamById(selTeam);
   if (!team) return;
   document.getElementById('team-edit-name').value = team.name;
   var members = team.members.slice();
   var availPeople = getProjectPeople(selProj);
-  renderMemberPicker('edit', 'team-edit-members-list', 'team-edit-new-member', 'team-edit-add-member', members, availPeople, function(m) { members = m; });
+  renderMemberPicker('edit', 'team-edit-members-list', 'team-edit-avail', 'team-edit-new-member', 'team-edit-add-member', members, availPeople, function (m) { members = m; });
   document.getElementById('team-edit-overlay').style.display = 'flex';
 });
 
-document.getElementById('team-edit-add-member').addEventListener('click', function() {
+document.getElementById('team-edit-add-member').addEventListener('click', function () {
   var input = document.getElementById('team-edit-new-member');
   var name = input.value.trim();
   if (!name) return;
   var state = _memberPickers['edit'];
   if (state && state.members.indexOf(name) < 0) {
     state.members.push(name);
-    var availPeople = getProjectPeople(selProj);
-    renderMembersList('edit', 'team-edit-members-list', 'team-edit-new-member', 'team-edit-add-member', availPeople);
+    renderMembersList('edit', 'team-edit-members-list', 'team-edit-avail', getProjectPeople(selProj));
   }
   input.value = '';
   input.focus();
 });
 
-document.getElementById('team-edit-new-member').addEventListener('keydown', function(e) {
+document.getElementById('team-edit-new-member').addEventListener('keydown', function (e) {
   if (e.key === 'Enter') document.getElementById('team-edit-add-member').click();
 });
 
-document.getElementById('team-edit-ok').addEventListener('click', function() {
+document.getElementById('team-edit-ok').addEventListener('click', function () {
   var name = document.getElementById('team-edit-name').value.trim();
   if (!name) { alert('Team name required.'); return; }
   var state = _memberPickers['edit'];
   if (!state || state.members.length === 0) { alert('At least one member required.'); return; }
-  for (var i = 0; i < data.teams.length; i++) {
-    if (data.teams[i].id === selTeam) { data.teams[i].name = name; data.teams[i].members = state.members.slice(); break; }
-  }
+  var team = teamById(selTeam);
+  if (team) { team.name = name; team.members = state.members.slice(); }
   persist();
   document.getElementById('team-edit-overlay').style.display = 'none';
   renderAll();
 });
 
-document.getElementById('team-edit-cancel').addEventListener('click', function() {
+document.getElementById('team-edit-cancel').addEventListener('click', function () {
   document.getElementById('team-edit-overlay').style.display = 'none';
 });
 
-document.getElementById('team-del').addEventListener('click', function() {
+document.getElementById('team-attach').addEventListener('click', function () {
+  var proj = currentProject();
+  if (!proj) { alert('Select a project first.'); return; }
+  var listEl = document.getElementById('attach-list');
+  var avail = data.teams.filter(function (t) { return proj.teams.indexOf(t.id) < 0; });
+  listEl.innerHTML = '';
+  if (avail.length === 0) {
+    listEl.innerHTML = '<span class="team-note">Every team is already on this project.</span>';
+  }
+  avail.forEach(function (t) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = t.name + ' (' + t.members.join(', ') + ')';
+    btn.addEventListener('click', function () {
+      proj.teams.push(t.id);
+      persist();
+      document.getElementById('attach-overlay').style.display = 'none';
+      renderAll();
+    });
+    listEl.appendChild(btn);
+  });
+  document.getElementById('attach-overlay').style.display = 'flex';
+});
+
+document.getElementById('attach-close').addEventListener('click', function () {
+  document.getElementById('attach-overlay').style.display = 'none';
+});
+
+document.getElementById('team-del').addEventListener('click', function () {
   if (selTeam === null) { alert('Select a team first.'); return; }
   if (!confirm('Delete this team?')) return;
-  data.teams = data.teams.filter(function(t) { return t.id !== selTeam; });
-  for (var i = 0; i < data.projects.length; i++) {
-    if (data.projects[i].teams) data.projects[i].teams = data.projects[i].teams.filter(function(tid) { return tid !== selTeam; });
-  }
+  data.teams = data.teams.filter(function (t) { return t.id !== selTeam; });
+  data.projects.forEach(function (p) {
+    if (p.teams) p.teams = p.teams.filter(function (tid) { return tid !== selTeam; });
+    p.tasks.forEach(function (t) { if (t.team === selTeam) t.team = 0; });
+  });
   persist();
   selTeam = null;
   renderAll();
 });
 
 // ===================================================================
-// Task modal
+//  Task modal
 // ===================================================================
 var modalOverlay = document.getElementById('modal-overlay');
 var modalTitleInput = document.getElementById('modal-title-input');
 var modalDescInput = document.getElementById('modal-desc-input');
 var modalTeamSelect = document.getElementById('modal-team-select');
-var modalPersonsInput = document.getElementById('modal-persons-input');
+var modalStatusSelect = document.getElementById('modal-status-select');
+var modalDueDate = document.getElementById('modal-due-date');
+var modalDueTime = document.getElementById('modal-due-time');
 
-document.getElementById('task-add').addEventListener('click', function() {
-  if (selProj === null) { alert('Select a project first.'); return; }
-  modalTitleInput.value = '';
-  modalDescInput.value = '';
-  modalPersonsInput.value = '';
-
-  // Populate team dropdown
+function fillModalTeams(proj) {
   modalTeamSelect.innerHTML = '<option value="0">-- None --</option>';
-  var proj = null;
-  for (var i = 0; i < data.projects.length; i++) { if (data.projects[i].id === selProj) { proj = data.projects[i]; break; } }
-  if (proj && proj.teams) {
-    for (var i = 0; i < proj.teams.length; i++) {
-      for (var j = 0; j < data.teams.length; j++) {
-        if (data.teams[j].id === proj.teams[i]) {
-          var opt = document.createElement('option');
-          opt.value = data.teams[j].id;
-          opt.textContent = data.teams[j].name + ' (' + data.teams[j].members.join(', ') + ')';
-          modalTeamSelect.appendChild(opt);
-        }
-      }
-    }
+  if (!proj) return;
+  getProjectTeams(proj).forEach(function (t) {
+    var opt = document.createElement('option');
+    opt.value = t.id;
+    opt.textContent = t.name + ' (' + t.members.join(', ') + ')';
+    modalTeamSelect.appendChild(opt);
+  });
+}
+
+function openTaskModal(mode, tid) {
+  var proj = currentProject();
+  if (!proj) { alert('Select a project first.'); return; }
+
+  modalMode = mode;
+  modalTaskId = tid || null;
+  document.getElementById('modal-title').textContent = (mode === 'edit') ? 'Edit Task' : 'New Task';
+
+  modalStatusSelect.innerHTML = statusOptions('Pending');
+  fillModalTeams(proj);
+
+  var task = (mode === 'edit' && tid) ? findTask(tid) : null;
+  if (task) {
+    modalTitleInput.value = task.title || '';
+    modalDescInput.value = task.desc || '';
+    modalStatusSelect.value = task.status || 'Pending';
+    modalTeamSelect.value = String(task.team || 0);
+    modalDueDate.value = task.dueDate || '';
+    modalDueTime.value = task.dueTime || '';
+  } else {
+    modalTitleInput.value = '';
+    modalDescInput.value = '';
+    modalStatusSelect.value = 'Pending';
+    modalTeamSelect.value = '0';
+    modalDueDate.value = '';
+    modalDueTime.value = '';
   }
+
+  var members = task && task.persons ? task.persons.slice() : [];
+  var availPeople = getProjectPeople(proj.id);
+  renderMemberPicker('task', 'task-modal-members-list', 'task-modal-avail', 'task-modal-new-person', 'task-modal-add-person', members, availPeople, function (m) { members = m; });
+
   modalOverlay.style.display = 'flex';
   modalTitleInput.focus();
+}
+
+document.getElementById('task-add').addEventListener('click', function () { openTaskModal('new', null); });
+document.getElementById('task-edit').addEventListener('click', function () {
+  if (selTask === null) { alert('Select a task in the sheet first.'); return; }
+  openTaskModal('edit', selTask);
 });
 
-document.getElementById('modal-ok').addEventListener('click', function() {
+document.getElementById('task-modal-add-person').addEventListener('click', function () {
+  var input = document.getElementById('task-modal-new-person');
+  var name = input.value.trim();
+  if (!name) return;
+  var state = _memberPickers['task'];
+  if (state && state.members.indexOf(name) < 0) {
+    state.members.push(name);
+    renderMembersList('task', 'task-modal-members-list', 'task-modal-avail', getProjectPeople(selProj));
+  }
+  input.value = '';
+  input.focus();
+});
+
+document.getElementById('task-modal-new-person').addEventListener('keydown', function (e) {
+  if (e.key === 'Enter') { e.preventDefault(); document.getElementById('task-modal-add-person').click(); }
+});
+
+document.querySelectorAll('[data-quick]').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var q = this.dataset.quick;
+    if (q === 'today') modalDueDate.value = todayStr();
+    else if (q === 'tomorrow') modalDueDate.value = addDaysStr(1);
+    else if (q === 'week') modalDueDate.value = addDaysStr(7);
+    else if (q === 'clear') { modalDueDate.value = ''; modalDueTime.value = ''; }
+  });
+});
+
+document.getElementById('modal-ok').addEventListener('click', function () {
   var title = modalTitleInput.value.trim();
   if (!title) { alert('Task title required.'); return; }
-  var proj = null;
-  for (var i = 0; i < data.projects.length; i++) { if (data.projects[i].id === selProj) { proj = data.projects[i]; break; } }
+  var proj = currentProject();
   if (!proj) return;
 
-  var teamId = parseInt(modalTeamSelect.value) || 0;
-  var persons = modalPersonsInput.value.split(',').map(function(s) { return s.trim(); }).filter(function(s) { return s; });
+  var persons = (_memberPickers['task'] && _memberPickers['task'].members) ? _memberPickers['task'].members.slice() : [];
+  var teamId = parseInt(modalTeamSelect.value, 10) || 0;
+  var status = modalStatusSelect.value;
+  var dueDate = modalDueDate.value || '';
+  var dueTime = dueDate ? (modalDueTime.value || '') : '';
 
-  proj.tasks.push({
-    id: nextId(proj.tasks),
-    title: title,
-    desc: modalDescInput.value,
-    status: 'Pending',
-    team: teamId,
-    persons: persons
-  });
-  persist();
-  modalOverlay.style.display = 'none';
-  renderTasks();
-});
-
-document.getElementById('modal-cancel').addEventListener('click', function() {
-  modalOverlay.style.display = 'none';
-});
-
-document.getElementById('task-del').addEventListener('click', function() {
-  if (selProj === null || selTask === null) { alert('Select a task first.'); return; }
-  if (!confirm('Delete this task?')) return;
-  for (var i = 0; i < data.projects.length; i++) {
-    if (data.projects[i].id === selProj) {
-      data.projects[i].tasks = data.projects[i].tasks.filter(function(t) { return t.id !== selTask; });
-      break;
-    }
+  if (modalMode === 'edit' && modalTaskId !== null) {
+    var task = findTask(modalTaskId);
+    if (!task) return;
+    task.title = title;
+    task.desc = modalDescInput.value;
+    task.status = status;
+    task.team = teamId;
+    task.persons = persons;
+    task.dueDate = dueDate;
+    task.dueTime = dueTime;
+  } else {
+    proj.tasks.push({
+      id: nextId(proj.tasks),
+      title: title,
+      desc: modalDescInput.value,
+      status: status,
+      team: teamId,
+      persons: persons,
+      dueDate: dueDate,
+      dueTime: dueTime
+    });
   }
+
+  persist();
+  modalOverlay.style.display = 'none';
+  renderAll();
+});
+
+document.getElementById('modal-cancel').addEventListener('click', function () {
+  modalOverlay.style.display = 'none';
+});
+
+document.getElementById('task-del').addEventListener('click', function () {
+  if (selTask === null) { alert('Select a task in the sheet first.'); return; }
+  var task = findTask(selTask);
+  if (!task) return;
+  if (!confirm('Delete task "' + task.title + '"?')) return;
+  var proj = currentProject();
+  proj.tasks = proj.tasks.filter(function (t) { return t.id !== selTask; });
   persist();
   selTask = null;
-  renderTasks();
+  renderAll();
 });
 
-document.getElementById('task-toggle-archive').addEventListener('click', function() {
-  showArchived = !showArchived;
-  this.textContent = showArchived ? 'Show Current' : 'Show Finished';
-  selTask = null;
-  renderTasks();
-});
-
-document.getElementById('logout-btn').addEventListener('click', function() {
+// ===================================================================
+document.getElementById('logout-btn').addEventListener('click', function () {
   userRole = null;
   document.getElementById('login-overlay').classList.remove('hidden');
   document.body.classList.remove('member-mode');
-  document.getElementById('login-pw').value = '';
-  document.getElementById('login-err').textContent = '';
-  document.getElementById('login-pw-wrap').style.display = 'none';
-  document.getElementById('login-role').value = 'member';
+  loginPw.value = '';
+  loginErr.textContent = '';
+  loginPwWrap.style.display = 'none';
+  loginRole.value = 'member';
 });
 
 // ===================================================================
