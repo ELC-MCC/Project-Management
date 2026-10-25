@@ -204,7 +204,7 @@ button { cursor: pointer; }
 
 /* ============== SHEET ============== */
 .sheet-wrap { flex: 1; overflow: auto; background: #000000; }
-table.sheet { width: 100%; min-width: 940px; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
+table.sheet { width: 100%; min-width: 940px; border-collapse: separate; border-spacing: 0; table-layout: fixed; background: #000000; }
 table.sheet th {
   position: sticky; top: 0; z-index: 3;
   background: #0A0A0A; color: #CC9700;
@@ -220,13 +220,18 @@ table.sheet th:last-child { border-right: none; }
 table.sheet td {
   padding: 0; vertical-align: middle;
   border-bottom: 1px solid #2B2B2B; border-right: 1px solid #242424;
-  background: #000000;
 }
 table.sheet td:first-child { border-left: 3px solid transparent; }
 table.sheet tr.sheet-row { cursor: pointer; }
-table.sheet tr.sheet-row:hover td { background: #101010; }
+table.sheet tr.sheet-row:hover td.col-num,
+table.sheet tr.sheet-row:hover td.col-task,
+table.sheet tr.sheet-row:hover td.col-assigned,
+table.sheet tr.sheet-row:hover td.col-team { background: #101010; }
 table.sheet tr.sheet-row:hover td.col-num { color: #CC9700; }
-table.sheet tr.sheet-row.selected td { background: #0D0D0D; }
+table.sheet tr.sheet-row.selected td.col-num,
+table.sheet tr.sheet-row.selected td.col-task,
+table.sheet tr.sheet-row.selected td.col-assigned,
+table.sheet tr.sheet-row.selected td.col-team { background: #0D0D0D; }
 table.sheet tr.sheet-row.selected td:first-child { border-left-color: #FF6600; }
 table.sheet tr.archived td { opacity: 1; }
 table.sheet tr.archived .col-task .task-title { color: #777777; text-decoration: line-through; }
@@ -352,3 +357,163 @@ textarea.desc-edit::placeholder { color: #555555; }
 .add-row { display: flex; gap: 4px; margin-top: 4px; }
 .add-row input { flex: 1; font-size: 11px; }
 .add-row button { font-size: 10px; padding: 4px 9px; }
+
+/* ============================================================
+   MOBILE / TABLET
+   Everything below only applies at narrow widths. Desktop
+   layout above is untouched.
+   ============================================================ */
+
+/* Drawer toggle, hidden until the phone layout turns it on */
+.menu-btn {
+  display: none; font-size: 10px; font-weight: bold; letter-spacing: 1px;
+  padding: 4px 9px; height: 26px; border: 2px solid #555555;
+  background: #111111; color: #CC9700; white-space: nowrap;
+}
+.menu-btn:hover { border-color: #CC9700; }
+
+/* Small laptops and landscape tablets: narrow the sidebar a little */
+@media (max-width: 1100px) {
+  .sidebar { width: 210px; min-width: 190px; }
+  table.sheet { min-width: 860px; }
+  .stat { min-width: 76px; padding: 5px 9px; }
+  .stat-value { font-size: 14px; }
+  .content-tools button { font-size: 10px; padding: 4px 8px; }
+}
+
+/* Phones and portrait tablets: drawer nav + card rows */
+@media (max-width: 900px) {
+  /* Portrait tablet: sidebar stays visible, just narrower */
+  .sidebar { width: 200px; min-width: 180px; }
+  .side-head { padding: 9px 10px; font-size: 11px; }
+  .proj-item { padding: 10px; }
+  .team-item { padding: 9px 10px; }
+  /* Keep three footer buttons on one row in the narrow sidebar */
+  .panel-foot .btn { padding: 6px 8px; font-size: 10px; }
+
+  /* Content header and tools */
+  .content-head { padding: 7px 8px; min-height: 0; flex-wrap: wrap; gap: 6px; }
+  .content-title { font-size: 12px; white-space: normal; }
+  .content-sub { font-size: 9px; }
+  .content-tools { width: 100%; justify-content: flex-start; gap: 3px; }
+  .content-tools button { font-size: 10px; padding: 6px 8px; }
+
+  /* Filter toolbar wraps to full width rows */
+  .toolbar { padding: 6px; gap: 4px; }
+  .toolbar .spacer { display: none; }
+  .toolbar input[type="text"] { width: 100%; height: 30px; }
+  .toolbar select { height: 30px; }
+  .toolbar .tbtn { height: 30px; }
+  .chip { padding: 6px 8px; }
+
+  /* Stats become a 3 column grid so all seven fit */
+  .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .stat { min-width: 0; padding: 5px 8px; border-bottom: 1px solid #333333; }
+  .stat-value { font-size: 14px; }
+  .stat-value.small { font-size: 10px; }
+
+  /* Table becomes one card per task */
+  .sheet-wrap { padding: 6px; }
+  table.sheet { min-width: 0; display: block; }
+  table.sheet colgroup, table.sheet thead { display: none; }
+  table.sheet tbody { display: block; }
+
+  tr.sheet-row {
+    display: flex; flex-wrap: wrap;
+    border: 1px solid #333333; border-left: 3px solid transparent;
+    margin-bottom: 8px; background: #050505;
+  }
+  tr.sheet-row:hover { background: #0A0A0A; }
+  tr.sheet-row.selected { border-left-color: #FF6600; background: #0D0D0D; }
+  table.sheet tr.sheet-row:hover td.col-num,
+  table.sheet tr.sheet-row:hover td.col-task,
+  table.sheet tr.sheet-row:hover td.col-assigned,
+  table.sheet tr.sheet-row:hover td.col-team,
+  table.sheet tr.sheet-row.selected td.col-num,
+  table.sheet tr.sheet-row.selected td.col-task,
+  table.sheet tr.sheet-row.selected td.col-assigned,
+  table.sheet tr.sheet-row.selected td.col-team { background: transparent; }
+
+  table.sheet td { display: block; border: none; }
+  table.sheet td:first-child { border-left: none; }
+  /* Only the plain cells go transparent so the status and due fills survive */
+  table.sheet td.col-task,
+  table.sheet td.col-num,
+  table.sheet td.col-assigned,
+  table.sheet td.col-team { background: transparent; }
+
+  table.sheet td.col-num { display: none; }
+  td.col-task { order: 1; flex: 1 1 100%; padding: 9px 9px 4px 9px; }
+  .task-title { font-size: 13px; white-space: normal; }
+  .task-sub { white-space: normal; font-size: 10px; }
+
+  td.col-status { order: 2; flex: 1 1 100%; }
+  td.col-status select { padding: 9px 22px 9px 9px; font-size: 10px; }
+  td.col-status::after { top: 12px; right: 9px; }
+
+  td.col-assigned { order: 3; flex: 1 1 auto; padding: 5px 9px; }
+  td.col-team { order: 4; flex: 0 0 auto; padding: 5px 9px; }
+  .pastel-tag { font-size: 10px; padding: 3px 7px; }
+
+  td.col-due { order: 5; flex: 1 1 100%; padding: 4px 9px 8px 9px; }
+  .due-input { font-size: 12px; height: 32px; }
+  .time-input { font-size: 12px; height: 32px; flex: 0 0 100px; }
+  .due-note { font-size: 9px; padding: 3px 1px 0 1px; }
+
+  tr.detail-row { display: block; margin: -8px 0 8px 0; }
+  tr.detail-row td {
+    display: block; padding: 8px 9px;
+    border: 1px solid #333333; border-top: none; background: #080808;
+  }
+  .detail-meta { font-size: 9px; line-height: 1.6; }
+  textarea.desc-edit { font-size: 12px; min-height: 60px; }
+
+  .sheet-foot { padding: 6px 8px; font-size: 9px; }
+  .sheet-foot .legend { display: none; }
+
+  /* Dialogs use the full width */
+  .login-box { width: 92vw; padding: 20px; }
+  .modal-box { width: 94vw; max-width: 94vw; padding: 16px; max-height: 86vh; }
+  .modal-row { flex-direction: column; gap: 0; }
+  .modal-row > .modal-col { width: 100%; }
+  .modal-box input, .modal-box select { font-size: 13px; padding: 8px; }
+  .modal-btns button { padding: 11px; }
+  .mbtn-small { padding: 6px 10px; font-size: 11px; }
+  .avail-grid button { padding: 6px 10px; font-size: 11px; }
+}
+
+/* Phones: sidebar collapses into a drawer */
+@media (max-width: 600px) {
+  .menu-btn { display: inline-block; }
+  .brand { gap: 6px; }
+  .brand-title { display: none; }
+  .sync-status-text { max-width: 74px; font-size: 9px; }
+  .sync-btn { height: 30px; padding: 4px 10px; }
+
+  .sidebar {
+    position: fixed; top: 40px; left: 0; bottom: 0;
+    width: 86%; max-width: 320px;
+    background: #000000; border-right: 2px solid #CC9700;
+    border-bottom: none; z-index: 60; display: none;
+  }
+  body.drawer-open .sidebar { display: flex; }
+  .panel-foot .btn { padding: 9px 10px; font-size: 11px; }
+
+  .toolbar select { flex: 1 1 auto; }
+  .toolbar .tbtn { flex: 1 1 auto; }
+
+  /* One swipeable row of status chips, scrollbar hidden like a native strip */
+  .chips {
+    width: 100%; flex-wrap: nowrap; overflow-x: auto;
+    scrollbar-width: none; -ms-overflow-style: none;
+  }
+  .chips::-webkit-scrollbar { display: none; height: 0; }
+}
+
+/* Very small phones */
+@media (max-width: 380px) {
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .content-title { font-size: 11px; }
+  .chip { padding: 5px 6px; font-size: 9px; }
+  .sync-status-text { display: none; }
+}

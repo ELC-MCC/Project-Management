@@ -38,6 +38,19 @@ Teams sit under the projects, scoped to the selected project. **Attach** links a
 
 The stats strip counts the selected project's active tasks: total, done, active, overdue, due today, due in the next 7 days, and the nearest deadline.
 
+### Phones and tablets
+
+The layout adapts to screen width. A desktop monitor looks exactly the same as before.
+
+| Width | Layout |
+|---|---|
+| 1101px and up | Full sidebar, full spreadsheet |
+| 901 to 1100px | Slightly narrower sidebar, full spreadsheet |
+| 601 to 900px | Narrow sidebar, one card per task |
+| 600px and down | Projects and Teams move into a drawer behind the Projects button |
+
+On phones and portrait tablets each task becomes a card: title, colored status bar, assignee tags, then the due date and time with its color and label. The status chips become one swipeable row, the stats become a three column grid, and the buttons get larger tap targets. Tapping a project closes the drawer.
+
 ---
 
 ## The sheet

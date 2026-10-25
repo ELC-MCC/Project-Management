@@ -33,6 +33,7 @@
 
 <header class="topbar">
   <div class="brand">
+    <button id="menu-btn" class="menu-btn">Projects</button>
     <span class="brand-title">ELC Project Management</span>
     <span class="role-badge" id="role-badge">MEMBER</span>
   </div>
@@ -636,6 +637,7 @@ function renderProjects() {
 function selectProject(id) {
   selProj = id; selTeam = null; selTask = null;
   filterStatus = null; filterPerson = ''; searchQuery = '';
+  document.body.classList.remove('drawer-open');
   var sb = document.getElementById('search-box');
   if (sb) sb.value = '';
   renderAll();
@@ -1509,6 +1511,14 @@ document.getElementById('task-del').addEventListener('click', function () {
 });
 
 // ===================================================================
+// Phone layout: sidebar drawer toggle
+document.getElementById('menu-btn').addEventListener('click', function () {
+  document.body.classList.toggle('drawer-open');
+});
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') document.body.classList.remove('drawer-open');
+});
+
 document.getElementById('logout-btn').addEventListener('click', function () {
   userRole = null;
   document.getElementById('login-overlay').classList.remove('hidden');
