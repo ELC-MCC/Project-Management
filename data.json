@@ -76,100 +76,6 @@
       "tasks": []
     },
     {
-      "id": 3,
-      "name": "Pumpkin Launcher",
-      "teams": [],
-      "tasks": [
-        {
-          "id": 1,
-          "title": "Obtain The Pumpkin Launcher",
-          "desc": "We gotta get the pumpkin launcher from downtown",
-          "status": "Done",
-          "team": 0,
-          "persons": [
-            "Connor"
-          ],
-          "archived": true
-        },
-        {
-          "id": 2,
-          "title": "Attach Winch",
-          "desc": "",
-          "status": "Pending",
-          "team": 0,
-          "persons": []
-        },
-        {
-          "id": 3,
-          "title": "Attach New Posts",
-          "desc": "",
-          "status": "Pending",
-          "team": 0,
-          "persons": []
-        },
-        {
-          "id": 4,
-          "title": "Attach Plates and Bands",
-          "desc": "",
-          "status": "Pending",
-          "team": 0,
-          "persons": []
-        },
-        {
-          "id": 5,
-          "title": "Attach Basket",
-          "desc": "",
-          "status": "Pending",
-          "team": 0,
-          "persons": []
-        },
-        {
-          "id": 6,
-          "title": "Fix Wheels",
-          "desc": "",
-          "status": "Pending",
-          "team": 0,
-          "persons": []
-        },
-        {
-          "id": 7,
-          "title": "Finish sizing and Paint/Prime Side Panels",
-          "desc": "",
-          "status": "Pending",
-          "team": 0,
-          "persons": []
-        },
-        {
-          "id": 8,
-          "title": "Attach Side Panels once Painted",
-          "desc": "",
-          "status": "Pending",
-          "team": 0,
-          "persons": []
-        },
-        {
-          "id": 9,
-          "title": "Test Firing",
-          "desc": "",
-          "status": "Pending",
-          "team": 0,
-          "persons": []
-        },
-        {
-          "id": 10,
-          "title": "Finish Optimizing Mathematical Requirements",
-          "desc": "",
-          "status": "In Progress",
-          "team": 0,
-          "persons": [
-            "Connor",
-            "Jacob",
-            "Karma"
-          ]
-        }
-      ]
-    },
-    {
       "id": 4,
       "name": "Sign In Kiosk",
       "teams": [],
@@ -180,7 +86,9 @@
           "desc": "",
           "status": "In Progress",
           "team": 0,
-          "persons": []
+          "persons": [],
+          "dueDate": "",
+          "dueTime": ""
         },
         {
           "id": 2,
@@ -188,7 +96,9 @@
           "desc": "",
           "status": "Pending",
           "team": 0,
-          "persons": []
+          "persons": [],
+          "dueDate": "",
+          "dueTime": ""
         }
       ]
     },
@@ -209,7 +119,9 @@
           "desc": "Get info on what items need to go in fire cabinet/need to be disposed",
           "status": "In Progress",
           "team": 0,
-          "persons": []
+          "persons": [],
+          "dueDate": "",
+          "dueTime": ""
         }
       ]
     },
