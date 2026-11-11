@@ -66,13 +66,47 @@
         "Jacob",
         "Marc"
       ]
+    },
+    {
+      "id": 9,
+      "name": "Mechanical",
+      "members": [
+        "Tall Jacob",
+        "Johnathan R",
+        "Karma P",
+        "Olivia F",
+        "Connor K"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "Electrical",
+      "members": [
+        "CompSci Jacob",
+        "Tall Jacob",
+        "Johnathan R",
+        "Karma P"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "Software",
+      "members": [
+        "Connor K",
+        "CompSci Jacob",
+        "Noah C"
+      ]
     }
   ],
   "projects": [
     {
       "id": 2,
       "name": "R2-ELC",
-      "teams": [],
+      "teams": [
+        9,
+        10,
+        11
+      ],
       "tasks": []
     },
     {
